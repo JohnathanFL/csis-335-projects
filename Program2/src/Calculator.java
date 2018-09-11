@@ -1,29 +1,35 @@
+/**
+ * Author: Johnathan Lee
+ * Due Date: 09/12/18
+ *
+ * Calculator:
+ *
+ * Calculates an employee's pay based on a 40-hour workweek, giving time-and-a-half for overtime, using a GUI.
+ **/
+
 import javafx.application.Application;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 public class Calculator extends Application {
   public final BigDecimal minForOvertime = new BigDecimal(40);
   public final BigDecimal overtimeMultiplier = new BigDecimal(1.5);
-  private final MathContext roundingCtx = new MathContext(2, RoundingMode.UP);
+  private final DecimalFormat outFormat = new DecimalFormat("$###,###,###.00");
 
   private Scene scene;
   private Stage stage;
   private GridPane root;
 
   private TextField nameField, hoursField, rateField;
-  private Label outLabel;
+  private Text outText;
   private Button calcButton;
 
   public static void main(String[] args) {
@@ -38,6 +44,11 @@ public class Calculator extends Application {
     this.calcButton.setOnAction(event -> this.validateAndCalc());
   }
 
+  /**
+   * createLayout
+   *
+   * Creates all UI controls and adds them to the scene/stage.
+   **/
   private void createLayout() {
     this.root = new GridPane();
     this.scene = new Scene(this.root);
@@ -56,8 +67,8 @@ public class Calculator extends Application {
     }
 
     { // Labels
-      this.outLabel = new Label("$");
-      this.root.add(outLabel, 2, 5);
+      this.outText = new Text("$");
+      this.root.add(outText, 2, 5);
 
       Label topText = new Label("Employee Information");
       this.root.add(topText, 1, 1);
@@ -69,7 +80,9 @@ public class Calculator extends Application {
     }
 
     this.calcButton = new Button("Calculate Gross Pay");
+    this.calcButton.setDefaultButton(true); // Make enter redirect to this button
     this.root.add(this.calcButton, 1, 6);
+
 
 
     stage.setTitle("Pay Rate Calculator");
@@ -78,6 +91,9 @@ public class Calculator extends Application {
 
   }
 
+  /**
+   * First validates hours and rate textfields, then invokes calcPay
+   **/
   private void validateAndCalc() {
     boolean invalid = false;
     final String validHoursChars = "0123456789";
@@ -95,8 +111,18 @@ public class Calculator extends Application {
 
     if (!invalid)
       calcPay();
+
+
   }
 
+  /**
+   * Calculates pay using the following formulae:
+   *
+   * if hours <= 40: hours * rate
+   * if hours > 40: (40 * rate) + (hours - 40) * (rate * 1.5)
+   *
+   * Outputs into the outText attribute.
+   **/
   private void calcPay() {
     BigDecimal hours, rate, finalPay;
 
@@ -111,9 +137,15 @@ public class Calculator extends Application {
       finalPay = hours.multiply(rate);
 
 
-    finalPay.round(roundingCtx);
 
-    this.outLabel.setText("$" + finalPay.toString());
+
+    this.outText.setText(outFormat.format(finalPay));
+
+    this.rateField.clear();
+    this.hoursField.clear();
+    this.nameField.clear();
+
+    this.nameField.requestFocus();
   }
 
 }
