@@ -1,6 +1,8 @@
 /**
  * Author: Johnathan Lee
+ * Program 2
  * Due Date: 09/12/18
+ * Handed in 9/12/18
  *
  * Calculator:
  *
@@ -73,24 +75,15 @@ public class Calculator extends Application {
       this.hoursField = new TextField("");
       this.root.add(this.hoursField, 2, 3);
       this.hoursField.textProperty().addListener((ob, oldVal, newVal) -> {
-        // Took a little while to test this one:
-        // One or more of any digit, optionally followed by a dot and more digits, followed by the end of the string.
-        // If there is a dot, there MUST be digits afterwards.
-        //
-        // For both this and the rateField, the {0,1} limiter on the entire thing is needed to allow clearing the
-        // field (whether manually or programmatically)
-        if(!newVal.matches("(^\\d+\\.*\\d*$){0,1}"))
+        if(!newVal.matches("^(\\d+(\\.\\d*)?)?$"))
           this.hoursField.setText(oldVal);
       });
 
 
       this.rateField = new TextField("");
       this.rateField.textProperty().addListener((ob, oldVal, newVal) -> {
-        // Also took a little while:
-        // 0-3 digits, optionally followed by a comma, and the entire thing optionally repeated (thousands, millions,
-        // etc), followed by an optional dot and 2 digits (since no monetary system goes beyond 2 as far as I know)
-        if(!newVal.matches("(^(\\d{0,3},*)+(\\.\\d{0,2})*$){0,1}"))
-          this.rateField.setText(newVal);
+        if(!newVal.matches("(^(\\d+)(\\.\\d{0,2})?$)|(^$)"))
+          this.rateField.setText(oldVal);
       });
       this.root.add(this.rateField, 2, 4);
     }
