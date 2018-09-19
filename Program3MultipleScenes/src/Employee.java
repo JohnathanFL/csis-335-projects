@@ -11,6 +11,7 @@ public class Employee {
     this.lastName = tmpLName;
     this.salary = tmpSalary;
 
+
     this.id = lastIDUsed++;
 
     if(this.salary >= 50000)
