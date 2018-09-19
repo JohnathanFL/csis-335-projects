@@ -11,6 +11,12 @@ public class Employee {
     this.lastName = tmpLName;
     this.salary = tmpSalary;
 
+    this.id = lastIDUsed++;
+
+    if(this.salary >= 50000)
+      this.bonusRate = 0.05f;
+    else
+      this.bonusRate = 0.02f;
   }
 
   public String toString() {

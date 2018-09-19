@@ -1,18 +1,21 @@
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.util.ArrayList;
 
 public class MultiScene extends Application {
-  private ArrayList<Employee> employees;
+  private ObservableList<Employee> employees;
   private ArrayList<Pair<String, Integer>> validLogins;
   private Stage stage;
   private Scene loginScene, adderScene, displayScene;
@@ -22,17 +25,14 @@ public class MultiScene extends Application {
     launch(args);
   }
 
-  private void createDisplayUI() {
-  }
-
   @Override
   public void start(Stage primStage) {
     this.validLogins = new ArrayList<>(1);
-    this.validLogins.add(new Pair<>("admin", "guest".hashCode()));
-    System.out.println("guest".hashCode());
+    this.validLogins.add(new Pair<>("admin", /* I don't intend to ever even start such bad practices*/"guest".hashCode()));
+    this.employees = FXCollections.observableArrayList(this.employees);
 
-    createLoginUI();
-    createAdderUI();
+    this.createLoginUI();
+    this.createAdderUI();
 
     this.stage = primStage;
     this.stage.setScene(loginScene);
@@ -57,36 +57,30 @@ public class MultiScene extends Application {
     loginButton.setDisable(true);
 
 
-    // in order: UserName is valid, Password is valid, entire form is valid so can login
-    boolean[] canClickFlags = {false, false, false};
-
+    // in order: UserName is valid, Password is valid,
+    boolean[] canClickFlags = {false, false};
 
     userField.textProperty().addListener((o, oldText, newText) -> {
       canClickFlags[0] = !newText.isEmpty();
-
-      canClickFlags[2] = canClickFlags[0] && canClickFlags[1];
-      loginButton.setDisable(!canClickFlags[2]);
-
-      System.out.println(canClickFlags[0]);
+      loginButton.setDisable(!(canClickFlags[0] && canClickFlags[1]));
     });
     passField.textProperty().addListener((o, oldText, newText) -> {
       canClickFlags[1] = !newText.isEmpty();
-
-      canClickFlags[2] = canClickFlags[0] && canClickFlags[1];
-      loginButton.setDisable(!canClickFlags[2]);
+      loginButton.setDisable(!(canClickFlags[0] && canClickFlags[1]));
     });
 
     loginButton.setOnAction(e -> {
-      if (canClickFlags[2]) {
         String username = userField.getText();
         int passHash = passField.getText().hashCode();
 
         for (Pair<String, Integer> validPair : this.validLogins)
-          if (validPair.getKey().equals(username) && validPair.getValue().intValue() == passHash) {
-            login();
+          if (validPair.getKey().equals(username) && validPair.getValue() == passHash) {
+            loginSuccessful();
             return;
           }
-      }
+
+          // Didn't find a valid username/password combo
+        loginFailed();
     });
 
 
@@ -98,11 +92,95 @@ public class MultiScene extends Application {
 
   }
 
+  private void loginFailed() {}
+  private void loginSuccessful(){
+    Stage popup = new Stage();
+
+    popup.setTitle("Login success!");
+    popup.initModality(Modality.APPLICATION_MODAL);
+    popup.initOwner(this.stage);
+
+    GridPane grid = new GridPane();
+
+    grid.add(new Text("Login successful!"), 0,0);
+
+    Button accept = new Button("Ok");
+    accept.setOnAction(e -> {
+      this.stage.setScene(adderScene);
+      popup.close();
+    });
+    accept.setDefaultButton(true);
+    grid.add(accept, 1,0);
+
+    popup.setScene(new Scene(grid));
+    popup.show();
+  }
   private void createAdderUI() {
+    GridPane grid = new GridPane();
+
+    grid.add(new Text("First Name: "), 0,0);
+    grid.add(new Text("Last Name: "), 0,1);
+
+    boolean[] validFields = {false, false};
+    TextField firstField = new TextField(), lastField = new TextField(), salaryField = new TextField();
+
+
+    grid.add(firstField, 1, 0);
+    grid.add(lastField, 1,1);
+    grid.add(salaryField, 1, 2);
+
+    Button submit = new Button("Submit");
+
+    firstField.textProperty().addListener((a,b, newText) -> {
+      validFields[0] = !newText.isEmpty();
+      submit.setDisable(!(validFields[0] && validFields[1]));
+    });
+
+    lastField.textProperty().addListener((a,b,newText) -> {
+      validFields[1] = !newText.isEmpty();
+      submit.setDisable(!(validFields[0] && validFields[1]));
+    });
+
+    submit.setOnAction(e -> {
+      this.employees.add(new Employee(firstField.getText(), lastField.getText(), Float.parseFloat(salaryField.getText())));
+      System.out.println(this.employees);
+      String empty = "";
+      firstField.setText(empty);
+      lastField.setText(empty);
+      salaryField.setText(empty);
+    });
+    grid.add(submit, 0, 3);
+
+    Button close = new Button("Close");
+    close.setOnAction(e -> {
+      String empty = "";
+      firstField.setText(empty);
+      lastField.setText(empty);
+      salaryField.setText(empty);
+      this.stage.setScene(this.loginScene);
+    });
+    grid.add(close, 1, 3);
+
+    Button display = new Button("Display");
+    display.setOnAction(e -> {
+      this.stage.setScene(displayScene);
+    });
+
+    grid.add(display, 3,3);
+
+
+    this.adderScene = new Scene(grid);
+
   }
 
-  private void login() {
-    System.out.println("Got to login!");
+  private void createDisplayUI() {
+
+    TableView table = new TableView(this.employees);
+
+
+
+
+    this.displayScene = new Scene(table);
   }
 
 }
