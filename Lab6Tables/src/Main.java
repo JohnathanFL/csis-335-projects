@@ -34,7 +34,7 @@ public class Main extends Application {
 
   @Override
   public void start(Stage primStage) {
-    .stage = primStage;
+    stage = primStage;
 
     createUI();
     stage.show();
@@ -44,11 +44,12 @@ public class Main extends Application {
   private void createUI() {
     TableColumn nameCol = new TableColumn("Name"), majorCol = new TableColumn("Major"), advisorCol = new TableColumn("Advisor");
     {// Populate table
-      stuTable.setEditable(true);
-      nameCol.setCellFactory(new PropertyValueFactory<Student, String>("stName"));
-      majorCol.setCellFactory(new PropertyValueFactory<Student, String>("stMajor"));
-      advisorCol.setCellFactory(new PropertyValueFactory<Student, String>("stAdvisor"));
+      this.stuTable.setEditable(true);
+      nameCol.setCellValueFactory(new PropertyValueFactory<Student, String>("stName"));
+      majorCol.setCellValueFactory(new PropertyValueFactory<Student, String>("stMajor"));
+      advisorCol.setCellValueFactory(new PropertyValueFactory<Student, String>("stAdvisor"));
       this.stuTable.setItems(this.stuData);
+
       this.stuTable.getColumns().addAll(nameCol, majorCol, advisorCol);
     }
 
@@ -66,6 +67,7 @@ public class Main extends Application {
     btnAdd.setDefaultButton(true);
     btnAdd.setOnAction(e -> {
       this.stuData.add(new Student(txtName.getText(), txtMajor.getText(), txtAdvisor.getText()));
+      //System.out.println(this.stuData);
       txtName.clear();
       txtAdvisor.clear();
       txtMajor.clear();

@@ -2,11 +2,11 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,12 +29,14 @@ public class MultiScene extends Application {
   public void start(Stage primStage) {
     this.validLogins = new ArrayList<>(1);
     this.validLogins.add(new Pair<>("admin", /* I don't intend to ever even start such bad practices*/"guest".hashCode()));
-    this.employees = FXCollections.observableArrayList(this.employees);
-
-    this.createLoginUI();
-    this.createAdderUI();
+    this.employees = FXCollections.observableArrayList();
 
     this.stage = primStage;
+    this.createLoginUI();
+    this.createAdderUI();
+    this.createDisplayUI();
+
+
     this.stage.setScene(loginScene);
     this.stage.show();
   }
@@ -121,7 +123,8 @@ public class MultiScene extends Application {
     grid.add(new Text("First Name: "), 0,0);
     grid.add(new Text("Last Name: "), 0,1);
 
-    boolean[] validFields = {false, false};
+    // Respectively: First Name, Last Name, Salary
+    boolean[] validFields = {false, false, false};
     TextField firstField = new TextField(), lastField = new TextField(), salaryField = new TextField();
 
 
@@ -133,12 +136,16 @@ public class MultiScene extends Application {
 
     firstField.textProperty().addListener((a,b, newText) -> {
       validFields[0] = !newText.isEmpty();
-      submit.setDisable(!(validFields[0] && validFields[1]));
+      submit.setDisable(!(validFields[0] && validFields[1] && validFields[2]));
     });
 
     lastField.textProperty().addListener((a,b,newText) -> {
       validFields[1] = !newText.isEmpty();
-      submit.setDisable(!(validFields[0] && validFields[1]));
+      submit.setDisable(!(validFields[0] && validFields[1] && validFields[2]));
+    });
+    salaryField.textProperty().addListener((a,b,newText) -> {
+      validFields[2] = !newText.isEmpty();
+      submit.setDisable(!(validFields[0] && validFields[1] && validFields[2]));
     });
 
     submit.setOnAction(e -> {
@@ -174,13 +181,24 @@ public class MultiScene extends Application {
   }
 
   private void createDisplayUI() {
+    TableView table = new TableView();
 
-    TableView table = new TableView(this.employees);
+    TableColumn firstNameCol = new TableColumn("First Name"), lastNameCol = new TableColumn("Last Name"), salaryCol = new TableColumn("Salary");
+    table.setEditable(true);
+    firstNameCol.setCellValueFactory(new PropertyValueFactory<Employee, String>("firstName"));
+    lastNameCol.setCellValueFactory(new PropertyValueFactory<Employee, String>("lastName"));
+    salaryCol.setCellValueFactory(new PropertyValueFactory<Employee, Float>("salary"));
+
+    table.setItems(this.employees);
+    table.getColumns().addAll(firstNameCol, lastNameCol, salaryCol);
+
+
+    VBox vb = new VBox();
+    vb.getChildren().add(table);
 
 
 
-
-    this.displayScene = new Scene(table);
+    this.displayScene = new Scene(vb);
   }
 
 }
