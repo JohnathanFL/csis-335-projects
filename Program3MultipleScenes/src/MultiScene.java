@@ -15,6 +15,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
+import javax.xml.crypto.Data;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 public class MultiScene extends Application {
@@ -202,6 +204,19 @@ public class MultiScene extends Application {
     firstNameCol.setCellValueFactory(new PropertyValueFactory<Employee, String>("firstName"));
     lastNameCol.setCellValueFactory(new PropertyValueFactory<Employee, String>("lastName"));
     salaryCol.setCellValueFactory(new PropertyValueFactory<Employee, Float>("salary"));
+    salaryCol.setCellFactory(col -> {
+      TableCell<Employee, String> e = new TableCell<>();
+      // Wish you could do this with a lambda too
+      // You have no idea how long this stupid thing took to get working correctly. I blame vague JFX documentation.
+      return new TableCell<Employee, Float>() {
+        @Override
+        protected void updateItem(Float val, boolean empty) {
+          super.updateItem(val, empty);
+          if(!empty)
+            this.setText(String.format("$%.2f", this.getItem()));
+        }
+      };
+    });
     bonusCol.setCellValueFactory(new PropertyValueFactory<Employee, Float>("bonusRate"));
 
     table.setItems(this.employees);
