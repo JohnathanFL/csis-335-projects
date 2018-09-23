@@ -80,7 +80,6 @@ public class MultiScene extends Application {
     Button loginButton = new Button("Login");
     loginButton.setDefaultButton(true);
     loginButton.setDisable(true);
-    loginButton.setMaxWidth(Double.MAX_VALUE);
 
 
     // in order: UserName is valid, Password is valid,
@@ -119,7 +118,7 @@ public class MultiScene extends Application {
     });
 
 
-    grid.add(loginButton, 0, 3, 2, 1);
+    grid.add(loginButton, 1, 3);
 
 
     this.loginScene = new Scene(grid);
