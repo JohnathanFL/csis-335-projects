@@ -19,7 +19,8 @@ public class Main extends Application {
   private Scene inputScene, tableScene;
 
   private Image blankImage = new Image(getClass().getResource("/main/blank.png").toString());
-
+  // In order: TextField, ShippingType, BookType
+  private boolean[] canSubmit = {false, false, false};
 
   private ObservableList<Order> orders = FXCollections.observableArrayList();
 
@@ -77,10 +78,12 @@ public class Main extends Application {
     TextField custName = new TextField();
     custName.setPromptText("customer name...");
 
+
     Button submit = new Button("Submit"), display = new Button("Display");
     submit.setMaxWidth(Double.MAX_VALUE);
     display.setMaxWidth(Double.MAX_VALUE);
     submit.setDefaultButton(true);
+    submit.setDisable(true);
 
 
 
@@ -111,16 +114,37 @@ public class Main extends Application {
 
     bookTypeGroup.selectedToggleProperty().addListener((v, oldVal, newVal) -> {
       // If toggle got unselected, newVal becomes null.
-      if(newVal != null)
-        bookImg.setImage(((Order.BookType)newVal.getUserData()).getImg());
-      else
+      if(newVal != null) {
+        bookImg.setImage(((Order.BookType) newVal.getUserData()).getImg());
+        this.canSubmit[2] = true;
+      }
+      else {
         bookImg.setImage(blankImage);
+        this.canSubmit[1] = false;
+      }
+
+      submit.setDisable(!(this.canSubmit[0] && this.canSubmit[1] && this.canSubmit[2]));
     });
 
     destGroup.selectedToggleProperty().addListener((v, oldVal, newVal) -> {
-      if(newVal != null)
-        destImg.setImage(((Order.Shipping)newVal.getUserData()).getImg());
-      else destImg.setImage(blankImage);
+      if(newVal != null) {
+        destImg.setImage(((Order.Shipping) newVal.getUserData()).getImg());
+        this.canSubmit[1] = true;
+      }
+      else {
+        destImg.setImage(blankImage);
+        this.canSubmit[1] = false;
+      }
+
+      submit.setDisable(!(this.canSubmit[0] && this.canSubmit[1] && this.canSubmit[2]));
+    });
+    custName.textProperty().addListener((e, old, newVal) -> {
+      if(newVal != null && !newVal.isEmpty())
+        this.canSubmit[0] = true;
+      else
+        this.canSubmit[0] = true;
+
+      submit.setDisable(!(this.canSubmit[0] && this.canSubmit[1] && this.canSubmit[2]));
     });
 
     HBox inputBox = new HBox(prompt, custName);
@@ -188,11 +212,15 @@ public class Main extends Application {
     }
 
     Button back = new Button("Back");
+    back.setDefaultButton(true);
+    back.requestFocus();
     back.setOnAction(e -> this.stage.setScene(this.inputScene));
-
+    back.setMaxWidth(Double.MAX_VALUE);
+    back.setMaxHeight(Double.MAX_VALUE);
 
     VBox vb = new VBox(table, back);
-    this.tableScene = new Scene(vb, 500, 500);
+    VBox.setVgrow(back, Priority.ALWAYS);
+    this.tableScene = new Scene(vb, 500, 350);
   }
 
   public static void main(String[] args) {
