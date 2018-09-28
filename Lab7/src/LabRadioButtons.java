@@ -9,13 +9,16 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+
 public class LabRadioButtons extends Application {
   private Scene scene; HBox hb; VBox vb;
   private RadioButton rbBio, rbChem, rbPhy;
   private final ImageView pic = new ImageView();
   final ToggleGroup grpSci = new ToggleGroup();
 
-  @Override public void start(Stage prim) {
+  @Override public void start(Stage prim) throws Exception{
     rbBio = new RadioButton("Biology");
     rbBio.setUserData("biology");
     rbBio.setToggleGroup(grpSci);
@@ -32,7 +35,7 @@ public class LabRadioButtons extends Application {
       if(grpSci.getSelectedToggle() != null) {
         String tmp = grpSci.getSelectedToggle().getUserData().toString();
         System.out.println("USer selected: " + tmp);
-        tmp = "./" + tmp + ".jpg";
+        tmp = "file:" + tmp + ".jpg";
         System.out.println("Image file: " + tmp);
         Image image = new Image(tmp);
         pic.setImage(image);
@@ -49,7 +52,8 @@ public class LabRadioButtons extends Application {
     prim.show();
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception{
+    System.out.println(new File(".").getCanonicalPath());
     launch(args);
   }
 }

@@ -27,6 +27,7 @@ import javafx.util.Pair;
 
 import javax.xml.crypto.Data;
 import java.io.FileReader;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class MultiScene extends Application {
@@ -239,7 +240,7 @@ public class MultiScene extends Application {
         protected void updateItem(Integer val, boolean empty) {
           super.updateItem(val, empty);
           if(!empty)
-            this.setText(String.format("$%d.00", this.getItem()));
+            this.setText(new DecimalFormat("$###,###.00").format(val));
         }
       };
     });
