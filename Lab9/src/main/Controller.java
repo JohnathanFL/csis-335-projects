@@ -7,15 +7,24 @@ import javafx.scene.control.TextField;
 
 public class Controller {
   @FXML
-  private Button btnGreet;
+  private Button btnHello;
+
+  @FXML
+  private Button btnGoodBye;
 
   @FXML
   private TextField txtGreet;
 
   @FXML
-  private void handleButtonAction(ActionEvent e) {
-    System.out.println("Clicked me clicked me now ya gotta null me");
+  private void handleButtonHello(ActionEvent e) {
+    System.out.println("You clicked me!");
     txtGreet.setText("Hello World!");
+  }
+
+  @FXML
+  private void handleButtonGoodBye(ActionEvent e) {
+    System.out.println("Goodbye");
+    txtGreet.setText("Goodbye!");
   }
 
   private void initialize() {

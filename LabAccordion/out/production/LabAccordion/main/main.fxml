@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1">
+  <columnConstraints>
+      <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.5" minWidth="10.0" prefWidth="50.5" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="379.0" minWidth="10.0" prefWidth="347.5" />
+    <ColumnConstraints hgrow="SOMETIMES" maxWidth="250.5" minWidth="10.0" prefWidth="201.5" />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints maxHeight="196.5" minHeight="10.0" prefHeight="120.0" vgrow="SOMETIMES" />
+    <RowConstraints maxHeight="292.0" minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
+  </rowConstraints>
+   <children>
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+         <children>
+            <Label text="Announcements" />
+            <Accordion>
+              <panes>
+                <TitledPane animated="false" text="Program 3 -- username admin, password guest">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TextArea editable="false" prefHeight="200.0" prefWidth="348.0" text="&#10;&#10;Program 3  Clarification:&#10;&#10;Login Screen-- username admin, password guest&#10;" />
+                           </children>
+                        </AnchorPane>
+                  </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Textbook: 11th Edition of Deitel text">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TextArea editable="false" prefHeight="200.0" prefWidth="348.0" text="I've corrected the syllabus to show that the required textbook is the 11th edition of the Deitel book:&#10;&#10;Java How to Program 10/e Cover&#10;Java How to Program 10/e Cover&#10;&#10;&#10;ISBN: 0-13-474335-0&#10;© 2018" />
+                           </children></AnchorPane>
+                  </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Welcome to CSIS 335">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <TextArea editable="false" prefHeight="200.0" prefWidth="348.0" text="Welcome to our Graphical User Interface Programming course&#10;&#9;&#10;&#10;Hello.  I'm Professor Ficek, and I want to welcome you to our CSIS 335 &quot;Graphical User Interface&quot; programming class.&#10;&#10;I've been teaching for more than 30 years at MSUM.  My master's and Ph.D. work was done in the field of Artificial Intelligence.  I researched Genetic Algorithms in particular for my dissertation.&#10;&#10;  I thoroughly enjoy teaching and look forward to working with each of you.&#10;&#10;I have 3 sons. My oldest son Tony is an attorney, Daniel is an Aerospace Engineer with Boeing in Seattle, and Andrew is a mechanical engineer who will begin working with General Motors in Detroit.&#10;&#10;To get started with this course, please&#10;  click on MATERIALS, then CONTENT&#10;  begin by reading the SYLLABUS.   &#10;&#10;Feel free to call me or send an email if you have any questions -- I'm here to help.&#10;&#10;Professor Ficek&#10;&#10;Office:  218 477-2339" />
+                           </children></AnchorPane>
+                  </content>
+                </TitledPane>
+              </panes>
+            </Accordion>
+         </children>
+      </VBox>
+      <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" scaleX="3.0" scaleY="3.5" GridPane.columnSpan="3" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+         <image>
+            <Image url="@header.png" />
+         </image>
+      </ImageView>
+      <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
+         <children>
+            <Label text="Calendar" />
+            <Accordion>
+              <panes>
+                <TitledPane animated="false" text="Monday, October 1, 2018">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Upcoming events (10+)">
+                  <content>
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                  </content>
+                </TitledPane>
+              </panes>
+            </Accordion>
+         </children>
+      </VBox>
+   </children>
+</GridPane>
