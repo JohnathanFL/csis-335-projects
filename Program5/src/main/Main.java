@@ -1,50 +1,74 @@
 package main;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.io.IOException;
+import java.sql.Time;
 import java.util.concurrent.TimeUnit;
 
-class Splasher extends Application {
-  Stage stage;
-
-  @Override
-  public void start(Stage primStage) throws Exception {
-    System.out.println("Initializing splasher...");
-
-    Stage splasher = new Stage();
-    splasher.initStyle(StageStyle.UNDECORATED);
-    Parent splashRoot = FXMLLoader.load(Class.forName("main.Main").getResource("splash.png"));
-    splasher.setTitle("Welcome to the best calculator you'll ever use");
-    splasher.setScene(new Scene(splashRoot));
-    splasher.show();
-  }
-}
-
 public class Main extends Application {
-    Stage primStage;
+    Stage primStage, splasher;
+
+    @Override
+    public void init() throws IOException {
+
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception{
 
-        TimeUnit.SECONDS.sleep(3);
+        splasher = new Stage();
+        splasher.initStyle(StageStyle.UNDECORATED);
+        Parent splashRoot = FXMLLoader.load(getClass().getResource("splash.fxml"));
+
+        splasher.setTitle("Welcome to the best calculator you'll ever use");
+        splasher.setScene(new Scene(splashRoot));
+        splasher.setResizable(false);
+        splasher.initModality(Modality.APPLICATION_MODAL);
+        splasher.setAlwaysOnTop(true);
+        splasher.show();
+
 
 
         this.primStage = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("mainScene.fxml"));
+
         this.primStage.setTitle("Hello World");
-        this.primStage.setScene(new Scene(root, 300, 275));
-        this.primStage.show();
+        this.primStage.setScene(new Scene(root));
+
+
+      AnimationTimer timer = new AnimationTimer() {
+        long prev = -1, total = 0;
+
+        @Override
+        public void handle(long now) {
+          if(prev != -1) {
+            total += (now - prev);
+            prev = now;
+
+            if (TimeUnit.NANOSECONDS.toSeconds(total) >= 3) {
+              splasher.close();
+              primStage.show();
+              this.stop();
+            }
+          } else{
+            prev = now;
+          }
+        }
+      };
+
+      timer.start();
     }
 
 
     public static void main(String[] args) throws Exception {
-      Thread t2 = new Thread(() -> Splasher.launch(args));
-      t2.start();
       launch(args);
     }
 }

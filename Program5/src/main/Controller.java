@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 public class Controller {
   private static final String masterInputMatch = "^((\\d+,?)(\\.\\d*)?)?$";
 
+  private Double num1, num2;
 
   @FXML
   Button btnAdd, btnSub, btnMul, btnDiv;
@@ -20,14 +21,15 @@ public class Controller {
       finalRes = finalRes && b;
 
     for(Button btn : btns)
-      btn.setDisable(finalRes);
+      btn.setDisable(!finalRes);
   }
 
   public void initialize() {
     answerField.setEditable(false);
 
+    boolean[] canDiv = {true}; // Array to get around lambda restrictions
     boolean[] valids = {false, false};
-    enableAll(valids, btnSub, btnMul, btnDiv, btnAdd);
+    enableAll(valids, btnSub, btnMul, btnAdd, btnDiv);
 
     field1.textProperty().addListener((e, oldVal, newVal) -> {
       if(!newVal.matches(masterInputMatch))
@@ -35,18 +37,53 @@ public class Controller {
 
       valids[0] = !field1.getText().isEmpty();
       enableAll(valids, btnAdd, btnMul, btnSub);
-      btnDiv.setDisable(btnDiv.isDisable() || btnAdd.isDisable());
+      btnDiv.setDisable(btnAdd.isDisable() || !canDiv[0]);
+
+      if(!field1.getText().isEmpty())
+        num1 = Double.parseDouble(field1.getText());
     });
 
     field2.textProperty().addListener((e, oldVal, newVal) -> {
-      boolean validDiv = true;
 
-      if(!newVal.matches(masterInputMatch))
+      if(!newVal.matches(masterInputMatch)) {
         field2.setText(oldVal);
-      else
-        validDiv = (Double.parseDouble(newVal) != 0);
+      }else {
 
-        btnDiv.setDisable(!validDiv);
+
+        if(!newVal.isEmpty()) {
+          canDiv[0] = (Double.parseDouble(newVal) != 0);
+          valids[1] = true;
+          num2 = Double.parseDouble(field2.getText());
+        } else {
+          canDiv[0] = false;
+          valids[1] = false;
+        }
+      }
+
+        enableAll(valids, btnSub, btnMul, btnAdd);
+
+        btnDiv.setDisable(!canDiv[0] || btnAdd.isDisable());
     });
+  }
+
+
+  @FXML
+  private void add() {
+    answerField.setText(new Double(num1 + num2).toString());
+  }
+
+  @FXML
+  private void div() {
+    answerField.setText(new Double(num1 / num2).toString());
+  }
+
+  @FXML
+  private void sub() {
+    answerField.setText(new Double(num1 - num2).toString());
+  }
+
+  @FXML
+  private void mul() {
+    answerField.setText(new Double(num1 * num2).toString());
   }
 }

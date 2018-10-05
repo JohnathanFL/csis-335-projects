@@ -8,7 +8,7 @@
    <children>
       <ImageView fitHeight="512" fitWidth="1600" pickOnBounds="true" preserveRatio="true">
          <image>
-            <Image url="/main/splash.png" />
+            <Image url="@splash.png" />
          </image></ImageView>
    </children>
 </FlowPane>
