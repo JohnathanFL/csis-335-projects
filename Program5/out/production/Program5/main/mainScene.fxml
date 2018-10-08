@@ -13,7 +13,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <left>
-      <TilePane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="50.0" BorderPane.alignment="TOP_CENTER">
+      <TilePane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="712.0" prefWidth="50.0" BorderPane.alignment="TOP_CENTER">
          <children>
             <Button fx:id="btnAdd" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#add" prefHeight="50.0" prefWidth="50.0" text="+" />
             <Button fx:id="btnSub" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#sub" text="−" />
@@ -47,10 +47,10 @@
       <HBox prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <children>
             <Label text="Answer:         " />
-            <TextField fx:id="answerField" editable="false" />
+            <TextField fx:id="answerField" editable="false" maxWidth="1.7976931348623157E308" prefHeight="26.0" prefWidth="50.0" HBox.hgrow="ALWAYS" />
          </children>
          <BorderPane.margin>
-            <Insets left="60.0" />
+            <Insets left="60.0" right="50.0" />
          </BorderPane.margin>
       </HBox>
    </bottom>
