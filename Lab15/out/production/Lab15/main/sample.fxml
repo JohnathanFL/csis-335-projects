@@ -23,9 +23,9 @@
    <children>
       <Button fx:id="btnInfo" mnemonicParsing="false" text="Information Dialog" />
       <Button fx:id="btnWarn" mnemonicParsing="false" text="Warning Dialog" GridPane.rowIndex="1" />
-      <Button fx:id="btnCustom" mnemonicParsing="false" text="Custom Btns Dialog" GridPane.rowIndex="4" />
       <Button fx:id="btnError" mnemonicParsing="false" text="Error Dialog" GridPane.rowIndex="2" />
       <Button fx:id="btnConfirm" mnemonicParsing="false" text="Confirmation Dialog" GridPane.rowIndex="3" />
+      <Button fx:id="btnCustom" mnemonicParsing="false" text="Custom Btns Dialog" GridPane.rowIndex="4" />
       <Button fx:id="btnText" mnemonicParsing="false" text="Text Input Dialog" GridPane.rowIndex="5" />
       <Button fx:id="btnChoice" mnemonicParsing="false" text="Choice Dialog" GridPane.rowIndex="6" />
       <TextArea fx:id="txtConfirm" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
