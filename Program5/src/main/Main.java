@@ -1,3 +1,14 @@
+/*
+Author: Johnathan Lee
+CSIS 335
+Due 10/05/18
+
+Program 5
+
+A simple 2 number/4 op calculator with amazingly beautiful splash screen.
+
+ */
+
 package main;
 
 import javafx.animation.AnimationTimer;
@@ -40,12 +51,14 @@ public class Main extends Application {
         this.primStage = primaryStage;
         Parent root = FXMLLoader.load(getClass().getResource("mainScene.fxml"));
 
-        this.primStage.setTitle("Hello World");
+        this.primStage.setTitle("Calculatornator 5000");
         this.primStage.setScene(new Scene(root));
 
-
+      // Make sure the splash screen ends some time
       AnimationTimer timer = new AnimationTimer() {
-        long prev = -1, total = 0;
+
+        long prev = -1, /** Last timestamp recorded */
+                total = 0; /** Total NANOSECONDS, NOT SECONDS elapsed */
 
         @Override
         public void handle(long now) {
@@ -53,12 +66,14 @@ public class Main extends Application {
             total += (now - prev);
             prev = now;
 
+
+            // Close after 3 seconds
             if (TimeUnit.NANOSECONDS.toSeconds(total) >= 3) {
               splasher.close();
               primStage.show();
               this.stop();
             }
-          } else{
+          } else{ // Gotta have a start
             prev = now;
           }
         }
@@ -68,7 +83,7 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
       launch(args);
     }
 }
