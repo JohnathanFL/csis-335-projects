@@ -1,5 +1,7 @@
 package main;
 
+import java.util.ArrayList;
+
 public class Order {
   public enum Shipping {
     StorkExpress("Stork Express"), GremlinTrain("Gremlin Train"), SnailBackMail("Snailback Mail");
@@ -22,4 +24,8 @@ public class Order {
   private Shipping shipping;
   private Payment payment;
   private boolean hasWarranty;
+
+  public static ArrayList<Customer> parseFile(String fileName) {
+
+  }
 }
