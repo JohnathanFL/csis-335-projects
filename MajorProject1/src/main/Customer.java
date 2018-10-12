@@ -1,5 +1,7 @@
 package main;
 
+import javafx.collections.ObservableList;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -18,12 +20,11 @@ public class Customer {
                   String state,
                   String zip,
                   String cell, String email) {
-    if(custID != null) {
+    if (custID != null) {
       this.custID = custID;
-      if(custID > highestID)
+      if (custID > highestID)
         highestID = custID;
-    }
-    else
+    } else
       this.custID = ++highestID;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -115,12 +116,12 @@ public class Customer {
 
   public String serialize() {
     return String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s", this.custID, this.firstName, this.lastName, this.address,
-            this.city,
-            this.state, this.zip, this.cell, this.email);
+        this.city,
+        this.state, this.zip, this.cell, this.email);
   }
 
 
-  public static ArrayList<Customer> parseFile(File inFile)  {
+  public static ArrayList<Customer> parseFile(File inFile) {
     ArrayList<Customer> res = new ArrayList<>();
     try {
 
@@ -131,8 +132,8 @@ public class Customer {
         Matcher matcher = parsePattern.matcher(line);
         System.out.println(matcher.matches());
         res.add(new Customer(Integer.parseInt(matcher.group(1)), matcher.group(2), matcher.group(3),
-                              matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7),
-                              matcher.group(8), matcher.group(8)));
+            matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7),
+            matcher.group(8), matcher.group(8)));
       }
 
     } catch (Exception e) {
@@ -142,11 +143,12 @@ public class Customer {
     return res;
   }
 
-  public static void writeFile(File outFile, ArrayList<Customer> list) {
-    try{
-    BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
-    for(Customer cust : list)
-      writer.write(cust.serialize() + '\n');
-    } catch(Exception e) {}
+  public static void serialize(File outFile, ObservableList<Customer> list) {
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
+      for (Customer cust : list)
+        writer.write(cust.serialize() + '\n');
+    } catch (Exception e) {
+    }
   }
 }

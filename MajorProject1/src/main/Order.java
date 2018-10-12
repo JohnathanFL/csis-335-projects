@@ -2,10 +2,7 @@ package main;
 
 import javafx.collections.ObservableList;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -71,6 +68,7 @@ public class Order {
   }
 
   private ObservableList<Product> prodTable;
+
   public Order(ObservableList<Customer> custTable, ObservableList<Product> prodTable, int custID, int prodID,
                int quantity, Shipping shipping, Payment payment, boolean hasWarranty) {
     this.custID = custID;
@@ -83,7 +81,7 @@ public class Order {
     this.prodTable = prodTable;
 
     Product thisProduct = prodTable.filtered(p -> p.getProdID() == this.prodID).get(0);
-    this.subtotal = thisProduct.getUnitCost().multiply(new BigDecimal(this.quantity));
+    this.subtotal = thisProduct.getUnitCost().multiply(new BigDecimal(this.quantity)).add(this.shipping.getPrice()).multiply(BigDecimal.valueOf(1).add(BigDecimal.valueOf(this.payment.getAdded())));
 
   }
 
@@ -110,9 +108,9 @@ public class Order {
 
         // Once again, may the mighty Stroustrup forgive us our ugly code
         res.add(new Order(custTable, prodTable, Integer.parseInt(matcher.group(1)),
-                Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)),
-                Shipping.fromString(matcher.group(4)), Payment.fromString(matcher.group(5)),
-                Boolean.parseBoolean(matcher.group(6))));
+            Integer.parseInt(matcher.group(2)), Integer.parseInt(matcher.group(3)),
+            Shipping.fromString(matcher.group(4)), Payment.fromString(matcher.group(5)),
+            Boolean.parseBoolean(matcher.group(6))));
       }
 
     } catch (IOException e) {
@@ -120,6 +118,19 @@ public class Order {
     }
 
     return res;
+  }
+
+  public String serialize() {
+    return String.format("%s|%s|%s|%s|%s|%s", this.custID, this.prodID, this.quantity, this.shipping, this.payment, this.hasWarranty);
+  }
+
+  public static void serialize(File outFile, ObservableList<Order> list) {
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
+      for (Order order : list)
+        writer.write(order.serialize() + '\n');
+    } catch (Exception e) {
+    }
   }
 
   public String getFullName() {
@@ -138,12 +149,16 @@ public class Order {
   }
 
   public enum Shipping {
-    StorkExpress("Stork Express"), GremlinTrain("Gremlin Train"), SnailBackMail("Snailback Mail");
+    StorkExpress(BigDecimal.valueOf(10.0)), GremlinTrain(BigDecimal.valueOf(5.99)), SnailBackMail(BigDecimal.valueOf(2.99));
 
-    private final String name;
+    public BigDecimal getPrice() {
+      return price;
+    }
 
-    Shipping(String newName) {
-      this.name = newName;
+    private final BigDecimal price;
+
+    Shipping(BigDecimal price) {
+      this.price = price;
     }
 
     public static Shipping fromString(String from) {
@@ -154,22 +169,55 @@ public class Order {
       else
         return SnailBackMail;
     }
+
+
+
+    @Override
+    public String toString() {
+      switch (this) {
+        case StorkExpress:
+          return "Stork Express";
+        case GremlinTrain:
+          return "Gremlin Train";
+        case SnailBackMail:
+          return "Snailback Mail";
+          default:
+            return "Invalid Shipping";
+      }
+    }
   }
 
   public enum Payment {
-    Gold("Gold Coins"), SoulShards("Soul Shards");
+    Gold(0), GoblinCredit(0.05);
 
-    private final String type;
+    public double getAdded() {
+      return added;
+    }
 
-    Payment(String newType) {
-      this.type = newType;
+    // How much this payment type adds or subtracts from the purchase
+    private final double added;
+
+    Payment(double added) {
+      this.added = added;
     }
 
     public static Payment fromString(String from) {
       if (from.equals("Gold Coins"))
         return Gold;
       else
-        return SoulShards;
+        return GoblinCredit;
+    }
+
+    @Override
+    public String toString() {
+      switch (this) {
+        case GoblinCredit:
+          return "Goblin Credit";
+        case Gold:
+          return "Gold Coins";
+          default:
+            return "Invalid Payment Type";
+      }
     }
   }
 

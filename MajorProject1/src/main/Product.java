@@ -1,22 +1,27 @@
 package main;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import javafx.collections.ObservableList;
+
+import java.io.*;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Product {
   private static final Pattern parsePattern = Pattern.compile("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
+  private static final DecimalFormat fmt = new DecimalFormat("$###,###.00");
 
   private static int lastID = 0;
 
   int prodID, inStock;
   String prodName;
   BigDecimal unitCost;
+
+  public String getUnitCostFmt() {
+    return fmt.format(this.getUnitCost().doubleValue());
+  }
 
   public int getProdID() {
     return prodID;
@@ -52,7 +57,7 @@ public class Product {
 
   @Override
   public String toString() {
-    return this.prodName;
+    return "[ID: " + this.getProdID() + "] " + this.prodName;
   }
 
   public static ArrayList<Product> parseFile(File inFile) {
@@ -72,7 +77,7 @@ public class Product {
 
         System.out.println(matcher.group(4));
         res.add(new Product(Integer.parseInt(matcher.group(1)), Integer.parseInt(matcher.group(2)), matcher.group(3),
-                    new BigDecimal(matcher.group(4))));
+            new BigDecimal(matcher.group(4))));
       }
 
     } catch (IOException e) {
@@ -80,6 +85,19 @@ public class Product {
     }
 
     return res;
+  }
+
+  public String serialize() {
+    return String.format("%s|%s|%s|%s", this.prodID, this.inStock, this.prodName, this.unitCost);
+  }
+
+  public static void serialize(File outFile, ObservableList<Product> list) {
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
+      for (Product prod : list)
+        writer.write(prod.serialize() + '\n');
+    } catch (Exception e) {
+    }
   }
 
   public Product(int prodID, int inStock, String prodName, BigDecimal unitCost) {

@@ -5,6 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class Main extends Application {
@@ -21,6 +22,9 @@ public class Main extends Application {
 
         primaryStage.show();
         controller.addHandlers();
+        primaryStage.addEventHandler(WindowEvent.WINDOW_CLOSE_REQUEST, e-> {
+            controller.showSavers();
+        });
     }
 
 

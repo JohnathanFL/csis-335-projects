@@ -20,7 +20,7 @@ public class PrimeController {
 
   @FXML
   TextField txtFName, txtLName, txtAddress, txtCity,
-          txtState, txtZip, txtPhone, txtEmail, txtQuant, txtTotal;
+      txtState, txtZip, txtPhone, txtEmail, txtQuant, txtTotal;
 
   @FXML
   Button btnSubCust, btnClearCust, btnSubOrder, btnClearOrder;
@@ -42,8 +42,8 @@ public class PrimeController {
 
   @FXML
   TableColumn colCustAddr, colCustCell, colCustCity, colCustID, colCustFName, colCustLName, colCustState,
-          colCustZip, colCustEmail, colOrderCustName, colOrderPayment, colOrderProdName, colOrderQuant, colOrderShipping,
-          colOrderSubtotal, colOrderWarranty, colProdNumInStock, colProdProdID, colProdProdName, colProdUnitCost;
+      colCustZip, colCustEmail, colOrderCustName, colOrderPayment, colOrderProdName, colOrderQuant, colOrderShipping,
+      colOrderSubtotal, colOrderWarranty, colProdNumInStock, colProdProdID, colProdProdName, colProdUnitCost;
 
   @FXML
   ToggleGroup shippingGroup, paymentGroup;
@@ -76,8 +76,8 @@ public class PrimeController {
     this.btnSubCust.setOnAction(e -> {
       // May the mighty Stroustrup forgive us our ugly code, as we forgive those who write ugly code we must read.
       this.custList.add(new Customer(null, this.txtFName.getText(), this.txtLName.getText(),
-              this.txtAddress.getText(), this.txtCity.getText(), this.txtState.getText(), this.txtZip.getText(),
-              this.txtPhone.getText(), this.txtEmail.getText()));
+          this.txtAddress.getText(), this.txtCity.getText(), this.txtState.getText(), this.txtZip.getText(),
+          this.txtPhone.getText(), this.txtEmail.getText()));
 
       this.btnClearCust.fire();
     });
@@ -90,13 +90,17 @@ public class PrimeController {
       try {
         this.paymentGroup.getSelectedToggle().setSelected(false);
         this.shippingGroup.getSelectedToggle().setSelected(false);
-      } catch (Exception ex) {}
+      } catch (Exception ex) {
+      }
       this.checkWar.setSelected(false);
       this.protoOrder = new Order(this.custList, this.products);
     });
 
     this.btnSubOrder.setOnAction(e -> {
 
+
+
+      this.btnClearOrder.fire();
     });
   }
 
@@ -114,7 +118,25 @@ public class PrimeController {
 
     chooser.setTitle("Choose an Orders DB");
     this.orders = FXCollections.observableArrayList(Order.parseFile(chooser.showOpenDialog(window), this.custList,
-            this.products));
+        this.products));
+  }
+
+  public void showSavers() {
+    Window window = txtFName.getScene().getWindow();
+    FileChooser chooser = new FileChooser();
+    chooser.
+
+    chooser.setInitialDirectory(this.workingDir);
+    chooser.setTitle("Choose a Customer DB");
+
+    chooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("Database Files", ".txt"));
+    Customer.serialize(chooser.showOpenDialog(window), this.custList);
+
+    chooser.setTitle("Choose a Products DB");
+    Product.serialize(chooser.showOpenDialog(window), this.products);
+
+    chooser.setTitle("Choose an Orders DB");
+    Order.serialize(chooser.showOpenDialog(window), this.orders);
   }
 
   private void initTables() {
@@ -145,8 +167,8 @@ public class PrimeController {
       colOrderCustName.setCellValueFactory(new PropertyValueFactory<Order, String>("fullName"));
       colOrderProdName.setCellValueFactory(new PropertyValueFactory<Order, String>("prodName"));
       colOrderQuant.setCellValueFactory(new PropertyValueFactory<Order, Integer>("quantity"));
-      colOrderShipping.setCellValueFactory(new PropertyValueFactory<Order, String>("shippingName"));
-      colOrderPayment.setCellValueFactory(new PropertyValueFactory<Order, String>("paymentName"));
+      colOrderShipping.setCellValueFactory(new PropertyValueFactory<Order, Order.Shipping>("shipping"));
+      colOrderPayment.setCellValueFactory(new PropertyValueFactory<Order, Order.Payment>("payment"));
       colOrderWarranty.setCellValueFactory(new PropertyValueFactory<Order, Boolean>("hasWarranty"));
       colOrderSubtotal.setCellValueFactory(new PropertyValueFactory<Order, String>("subtotalFmt"));
     }
