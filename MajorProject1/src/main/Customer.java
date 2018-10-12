@@ -7,15 +7,24 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class Customer {
-  static int lastCustID = 0;
+  private static int highestID = 0;
   private int custID;
   private String firstName, lastName, address, city, state, zip, cell, email;
 
   // Each field separated by a pipe since they're pretty rare.
-  private static final Pattern parsePattern = Pattern.compile("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
+  private static final Pattern parsePattern = Pattern.compile("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
 
-  public Customer(String firstName, String lastName, String address, String city, String state, String zip, String cell, String email) {
-    this.custID = ++lastCustID;
+  public Customer(Integer custID, String firstName, String lastName, String address, String city,
+                  String state,
+                  String zip,
+                  String cell, String email) {
+    if(custID != null) {
+      this.custID = custID;
+      if(custID > highestID)
+        highestID = custID;
+    }
+    else
+      this.custID = ++highestID;
     this.firstName = firstName;
     this.lastName = lastName;
     this.address = address;
@@ -99,11 +108,21 @@ public class Customer {
   }
 
 
+  @Override
+  public String toString() {
+    return "[ID: " + this.custID + "] " + this.firstName + " " + this.lastName;
+  }
 
-  public static ArrayList<Customer> parseFile(String fileName)  {
+  public String serialize() {
+    return String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s", this.custID, this.firstName, this.lastName, this.address,
+            this.city,
+            this.state, this.zip, this.cell, this.email);
+  }
+
+
+  public static ArrayList<Customer> parseFile(File inFile)  {
     ArrayList<Customer> res = new ArrayList<>();
     try {
-      File inFile = new File(fileName);
 
       BufferedReader reader = new BufferedReader(new FileReader(inFile));
 
@@ -111,14 +130,23 @@ public class Customer {
       while ((line = reader.readLine().trim()) != null && !line.isEmpty()) {
         Matcher matcher = parsePattern.matcher(line);
         System.out.println(matcher.matches());
-        res.add(new Customer(matcher.group(0), matcher.group(1), matcher.group(2), matcher.group(3), matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7)));
-        System.out.println(res.toString());
+        res.add(new Customer(Integer.parseInt(matcher.group(1)), matcher.group(2), matcher.group(3),
+                              matcher.group(4), matcher.group(5), matcher.group(6), matcher.group(7),
+                              matcher.group(8), matcher.group(8)));
       }
 
     } catch (Exception e) {
-      System.out.println("Failed to load " + fileName);
+      System.out.println("Failed to load " + inFile);
     }
 
     return res;
+  }
+
+  public static void writeFile(File outFile, ArrayList<Customer> list) {
+    try{
+    BufferedWriter writer = new BufferedWriter(new FileWriter(outFile));
+    for(Customer cust : list)
+      writer.write(cust.serialize() + '\n');
+    } catch(Exception e) {}
   }
 }

@@ -5,15 +5,22 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.omg.CORBA.PRIVATE_MEMBER;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("PrimeScene.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("PrimeScene.fxml"));
         primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(loader.load(), 1600, 600));
+
+
+        PrimeController controller = loader.getController();
+
+
         primaryStage.show();
+        controller.addHandlers();
     }
 
 

@@ -12,6 +12,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -127,9 +128,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <RadioButton fx:id="radStork" mnemonicParsing="false" text="Stork Express (+$10.99)" />
-                        <RadioButton fx:id="radGrem" mnemonicParsing="false" text="Gremlin Train (+$5.99)" GridPane.columnIndex="1" />
-                        <RadioButton fx:id="radSnail" mnemonicParsing="false" text="Snailback Mail (+$2.99)" GridPane.columnIndex="2" />
+                        <RadioButton fx:id="radStork" mnemonicParsing="false" text="Stork Express (+$10.99)">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="shippingGroup" />
+                           </toggleGroup></RadioButton>
+                        <RadioButton fx:id="radGrem" mnemonicParsing="false" text="Gremlin Train (+$5.99)" toggleGroup="$shippingGroup" GridPane.columnIndex="1" />
+                        <RadioButton fx:id="radSnail" mnemonicParsing="false" text="Snailback Mail (+$2.99)" toggleGroup="$shippingGroup" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
                   <Label prefHeight="16.0" prefWidth="189.0" text="Warranty?" GridPane.rowIndex="6" />
@@ -145,8 +149,11 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <RadioButton fx:id="radGold" mnemonicParsing="false" text="Gold Coins" />
-                        <RadioButton fx:id="radGob" mnemonicParsing="false" text="Goblin Credit (+2%)" GridPane.columnIndex="1" />
+                        <RadioButton fx:id="radGold" mnemonicParsing="false" text="Gold Coins">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="paymentGroup" />
+                           </toggleGroup></RadioButton>
+                        <RadioButton fx:id="radGob" mnemonicParsing="false" text="Goblin Credit (+2%)" toggleGroup="$paymentGroup" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>
                </children>
