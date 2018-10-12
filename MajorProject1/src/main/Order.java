@@ -1,5 +1,7 @@
 package main;
 
+import javafx.collections.ObservableList;
+
 import java.util.ArrayList;
 
 public class Order {
@@ -25,7 +27,22 @@ public class Order {
   private Payment payment;
   private boolean hasWarranty;
 
-  public static ArrayList<Customer> parseFile(String fileName) {
 
+  private ObservableList<Customer> custTable;
+  private ObservableList<Product> prodTable;
+
+  public static ArrayList<Order> parseFile(String fileName) {
+    return new ArrayList<>();
+  }
+
+  public String getFullName() {
+    // Should only ever be one in the returned list, so we can just take the first anyway.
+    Customer thisCust = this.custTable.filtered(cust -> cust.getCustID() == this.custID).get(0);
+    return thisCust.getFirstName() + " " + thisCust.getLastName();
+  }
+
+  public String getProdName() {
+    // See comment in getFullName
+    return this.prodTable.filtered(prod -> prod.getProdID() == this.prodID).get(0).getProdName();
   }
 }

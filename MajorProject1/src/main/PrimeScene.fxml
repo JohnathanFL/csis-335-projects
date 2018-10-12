@@ -164,15 +164,15 @@
                      <content>
                         <TableView fx:id="custTable" prefHeight="200.0" prefWidth="200.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="Cust ID" />
-                            <TableColumn prefWidth="75.0" text="First Name" />
-                              <TableColumn prefWidth="75.0" text="Last Name" />
-                              <TableColumn prefWidth="75.0" text="Address" />
-                              <TableColumn prefWidth="75.0" text="City" />
-                              <TableColumn prefWidth="75.0" text="State" />
-                              <TableColumn prefWidth="75.0" text="Zip" />
-                              <TableColumn prefWidth="75.0" text="Cell" />
-                              <TableColumn prefWidth="75.0" text="Email" />
+                            <TableColumn fx:id="colCustID" prefWidth="75.0" text="Cust ID" />
+                            <TableColumn fx:id="colCustFName" prefWidth="75.0" text="First Name" />
+                              <TableColumn fx:id="colCustLName" prefWidth="75.0" text="Last Name" />
+                              <TableColumn fx:id="colCustAddr" prefWidth="75.0" text="Address" />
+                              <TableColumn fx:id="colCustCity" prefWidth="75.0" text="City" />
+                              <TableColumn fx:id="colCustState" prefWidth="75.0" text="State" />
+                              <TableColumn fx:id="colCustZip" prefWidth="75.0" text="Zip" />
+                              <TableColumn fx:id="colCustCell" prefWidth="75.0" text="Cell" />
+                              <TableColumn fx:id="colCustEmail" prefWidth="75.0" text="Email" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -184,10 +184,10 @@
                      <content>
                         <TableView fx:id="prodTable" prefHeight="200.0" prefWidth="200.0">
                           <columns>
-                            <TableColumn prefWidth="101.66666412353521" text="Product ID" />
-                            <TableColumn prefWidth="146.6666717529297" text="Number in Stock" />
-                              <TableColumn minWidth="0.0" prefWidth="135.66665649414062" text="Product Name" />
-                              <TableColumn minWidth="0.0" prefWidth="99.33331298828125" text="Unit Cost" />
+                            <TableColumn fx:id="colProdProdID" prefWidth="101.66666412353521" text="Product ID" />
+                            <TableColumn fx:id="colProdNumInStock" prefWidth="146.6666717529297" text="Number in Stock" />
+                              <TableColumn fx:id="colProdProdName" minWidth="0.0" prefWidth="135.66665649414062" text="Product Name" />
+                              <TableColumn fx:id="colProdUnitCost" minWidth="0.0" prefWidth="99.33331298828125" text="Unit Cost" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -199,13 +199,13 @@
                      <content>
                         <TableView fx:id="orderTable" prefHeight="200.0" prefWidth="200.0">
                           <columns>
-                            <TableColumn prefWidth="112.3333358764649" text="Customer Name" />
-                            <TableColumn prefWidth="91.3333740234375" text="Product Name" />
-                              <TableColumn prefWidth="91.3333740234375" text="Quantity" />
-                              <TableColumn prefWidth="91.3333740234375" text="Shipping" />
-                              <TableColumn prefWidth="91.3333740234375" text="Payment" />
-                              <TableColumn prefWidth="124.0" text="Has Warranty?" />
-                              <TableColumn prefWidth="124.0" text="Subtotal" />
+                            <TableColumn fx:id="colOrderCustName" prefWidth="112.3333358764649" text="Customer Name" />
+                            <TableColumn fx:id="colOrderProdName" prefWidth="91.3333740234375" text="Product Name" />
+                              <TableColumn fx:id="colOrderQuant" prefWidth="91.3333740234375" text="Quantity" />
+                              <TableColumn fx:id="colOrderShipping" prefWidth="91.3333740234375" text="Shipping" />
+                              <TableColumn fx:id="colOrderPayment" prefWidth="91.3333740234375" text="Payment" />
+                              <TableColumn fx:id="colOrderWarranty" prefWidth="124.0" text="Has Warranty?" />
+                              <TableColumn fx:id="colOrderSubtotal" prefWidth="124.0" text="Subtotal" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
