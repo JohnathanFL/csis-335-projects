@@ -114,8 +114,8 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <TextField fx:id="txtQuant" />
-                        <Slider fx:id="sliderQuant" GridPane.columnIndex="1" />
+                        <TextField fx:id="txtQuant" editable="false" />
+                        <Slider fx:id="sliderQuant" blockIncrement="1.0" majorTickUnit="5.0" max="0.0" min="1.0" minorTickCount="4" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="1.0" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>
                   <GridPane GridPane.columnIndex="1" GridPane.rowIndex="4">
@@ -128,12 +128,12 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <RadioButton fx:id="radStork" mnemonicParsing="false" text="Stork Express (+$10.99)">
+                        <RadioButton fx:id="radNextDay" mnemonicParsing="false" text="Next Day (+$10.99)">
                            <toggleGroup>
                               <ToggleGroup fx:id="shippingGroup" />
                            </toggleGroup></RadioButton>
-                        <RadioButton fx:id="radGrem" mnemonicParsing="false" text="Gremlin Train (+$5.99)" toggleGroup="$shippingGroup" GridPane.columnIndex="1" />
-                        <RadioButton fx:id="radSnail" mnemonicParsing="false" text="Snailback Mail (+$2.99)" toggleGroup="$shippingGroup" GridPane.columnIndex="2" />
+                        <RadioButton fx:id="radTwoDay" mnemonicParsing="false" text="Two Day (+$5.99)" toggleGroup="$shippingGroup" GridPane.columnIndex="1" />
+                        <RadioButton fx:id="radStandard" mnemonicParsing="false" text="Standard (+$2.99)" toggleGroup="$shippingGroup" GridPane.columnIndex="2" />
                      </children>
                   </GridPane>
                   <Label prefHeight="16.0" prefWidth="189.0" text="Warranty?" GridPane.rowIndex="6" />
@@ -149,11 +149,11 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <RadioButton fx:id="radGold" mnemonicParsing="false" text="Gold Coins">
+                        <RadioButton fx:id="radCash" mnemonicParsing="false" text="Cash">
                            <toggleGroup>
                               <ToggleGroup fx:id="paymentGroup" />
                            </toggleGroup></RadioButton>
-                        <RadioButton fx:id="radGob" mnemonicParsing="false" text="Goblin Credit (+2%)" toggleGroup="$paymentGroup" GridPane.columnIndex="1" />
+                        <RadioButton fx:id="radCred" mnemonicParsing="false" text="Credit (+2%)" toggleGroup="$paymentGroup" GridPane.columnIndex="1" />
                      </children>
                   </GridPane>
                </children>

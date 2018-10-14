@@ -96,6 +96,8 @@ public class Product {
       BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
       for (Product prod : list)
         writer.write(prod.serialize() + '\n');
+
+      writer.close();
     } catch (Exception e) {
     }
   }

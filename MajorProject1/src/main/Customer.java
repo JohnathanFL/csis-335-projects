@@ -148,6 +148,8 @@ public class Customer {
       BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
       for (Customer cust : list)
         writer.write(cust.serialize() + '\n');
+
+      writer.close();
     } catch (Exception e) {
     }
   }
