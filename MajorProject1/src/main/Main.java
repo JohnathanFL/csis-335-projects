@@ -7,6 +7,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 import org.omg.CORBA.PRIVATE_MEMBER;
 
@@ -36,7 +37,8 @@ public class Main extends Application {
     Stage splashStage = new Stage();
 
     splashStage.setScene(new Scene(splashLoader.load()));
-
+    splashStage.initStyle(StageStyle.UNDECORATED);
+    splashStage.show();
 
     // practically straight from Program5. Still surprised jfx has no built in for a splash screen.
     AnimationTimer timer = new AnimationTimer() {
@@ -67,6 +69,9 @@ public class Main extends Application {
         }
       }
     };
+
+
+    timer.start();
 
   }
 }
