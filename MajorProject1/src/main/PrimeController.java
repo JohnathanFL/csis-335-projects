@@ -86,6 +86,10 @@ public class PrimeController {
     Window window = txtFName.getScene().getWindow();
     FileChooser chooser = new FileChooser();
     chooser.setInitialDirectory(this.workingDir);
+    FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Database files", "*.txt");
+    chooser.getExtensionFilters().add(filter);
+    chooser.setSelectedExtensionFilter(filter);
+
     chooser.setTitle("Choose a Customer DB");
 
 
@@ -360,6 +364,7 @@ public class PrimeController {
   public void showSavers() {
     Window window = txtFName.getScene().getWindow();
     FileChooser chooser = new FileChooser();
+
     FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Database files", "*.txt");
     chooser.getExtensionFilters().add(filter);
     chooser.setSelectedExtensionFilter(filter);
