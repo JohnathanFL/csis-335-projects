@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
@@ -189,17 +190,7 @@
                 </Tab>
                 <Tab text="Products">
                      <content>
-                        <TableView fx:id="prodTable" prefHeight="200.0" prefWidth="200.0">
-                          <columns>
-                            <TableColumn fx:id="colProdProdID" prefWidth="101.66666412353521" text="Product ID" />
-                            <TableColumn fx:id="colProdNumInStock" prefWidth="146.6666717529297" text="Number in Stock" />
-                              <TableColumn fx:id="colProdProdName" minWidth="0.0" prefWidth="135.66665649414062" text="Product Name" />
-                              <TableColumn fx:id="colProdUnitCost" minWidth="0.0" prefWidth="99.33331298828125" text="Unit Cost" />
-                          </columns>
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                        </TableView>
+                        <ListView fx:id="listProducts" prefHeight="200.0" prefWidth="200.0" />
                      </content>
                 </Tab>
                   <Tab text="Orders">

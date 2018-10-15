@@ -72,7 +72,8 @@ public class Product {
    */
   @Override
   public String toString() {
-    return "[ID: " + this.getProdID() + "] " + this.prodName;
+    return "[ID: " + this.getProdID() + "] <" + this.getInStock() + "> " + this.prodName +
+            (this.getInStock() > 1 ? "(s), " : ", ") + this.getUnitCostFmt() + "/piece";
   }
 
 

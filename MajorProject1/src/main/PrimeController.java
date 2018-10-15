@@ -42,7 +42,7 @@ public class PrimeController {
   private CheckBox checkWar;
 
   @FXML
-  private TableView custTable, prodTable, orderTable;
+  private TableView custTable, orderTable;
 
   @FXML
   private Slider sliderQuant;
@@ -51,7 +51,10 @@ public class PrimeController {
   @FXML
   private TableColumn colCustAddr, colCustCell, colCustCity, colCustID, colCustFName, colCustLName, colCustState,
           colCustZip, colCustEmail, colOrderCustName, colOrderPayment, colOrderProdName, colOrderQuant, colOrderShipping,
-          colOrderSubtotal, colOrderWarranty, colProdNumInStock, colProdProdID, colProdProdName, colProdUnitCost;
+          colOrderSubtotal, colOrderWarranty;
+
+  @FXML
+  private ListView listProducts;
 
   @FXML
   private ToggleGroup shippingGroup, paymentGroup;
@@ -111,7 +114,6 @@ public class PrimeController {
   private void initTables() {
     this.custTable.setItems(this.custList);
     this.orderTable.setItems(this.orders);
-    this.prodTable.setItems(this.products);
 
     { // Customer display columns
       colCustID.setCellValueFactory(new PropertyValueFactory<Customer, Integer>("custID"));
@@ -126,10 +128,7 @@ public class PrimeController {
     }
 
     { // Product display columns
-      colProdProdID.setCellValueFactory(new PropertyValueFactory<Product, Integer>("prodID"));
-      colProdNumInStock.setCellValueFactory(new PropertyValueFactory<Product, Integer>("inStock"));
-      colProdProdName.setCellValueFactory(new PropertyValueFactory<Product, String>("prodName"));
-      colProdUnitCost.setCellValueFactory(new PropertyValueFactory<Product, BigDecimal>("unitCostFmt"));
+      listProducts.setItems(this.products);
     }
 
     { // Order display columns
