@@ -1,3 +1,13 @@
+/**
+ * Major Project 1
+ * CSIS 335 - GUIs]
+ *
+ * Author: Johnathan Lee
+ * Due: 10/15/18
+ *
+ * A simple cash register interface. Allows adding customer details and ordering products, while also tracking how
+ * many of each product is on hand.
+ */
 package main;
 
 import javafx.collections.ObservableList;
@@ -16,6 +26,18 @@ public class Customer {
   // Each field separated by a pipe since they're pretty rare.
   private static final Pattern parsePattern = Pattern.compile("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
 
+  /**
+   * Main constructor for Customer
+   * @param custID Customer ID. If null, sets it to the highest ID ever processed +1
+   * @param firstName Customer's first name
+   * @param lastName Customer's last name
+   * @param address Customer's street address
+   * @param city Customer's city
+   * @param state Customer's state
+   * @param zip Customer's zip code
+   * @param cell Customer's cell phone
+   * @param email Customer's email address
+   */
   public Customer(Integer custID, String firstName, String lastName, String address, String city,
                   String state,
                   String zip,
@@ -114,6 +136,9 @@ public class Customer {
     return "[ID: " + this.custID + "] " + this.firstName + " " + this.lastName;
   }
 
+  /**
+   * @return A deserializable representation of this
+   */
   public String serialize() {
     return String.format("%s|%s|%s|%s|%s|%s|%s|%s|%s", this.custID, this.firstName, this.lastName, this.address,
         this.city,
@@ -121,6 +146,11 @@ public class Customer {
   }
 
 
+  /**
+   * Loads all Customers in a file
+   * @param inFile File to read
+   * @return An arrayList containing all customers in inFile
+   */
   public static ArrayList<Customer> parseFile(File inFile) {
     ArrayList<Customer> res = new ArrayList<>();
     try {
@@ -143,6 +173,11 @@ public class Customer {
     return res;
   }
 
+  /**
+   * Serializes an entire ArrayList of customers
+   * @param outFile File to write to
+   * @param list List to read from
+   */
   public static void serialize(File outFile, ObservableList<Customer> list) {
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));

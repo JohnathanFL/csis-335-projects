@@ -1,3 +1,14 @@
+/**
+ * Major Project 1
+ * CSIS 335 - GUIs]
+ *
+ * Author: Johnathan Lee
+ * Due: 10/15/18
+ *
+ * A simple cash register interface. Allows adding customer details and ordering products, while also tracking how
+ * many of each product is on hand.
+ */
+
 package main;
 
 import javafx.collections.FXCollections;
@@ -6,54 +17,56 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.stage.Window;
-import javafx.stage.WindowEvent;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.nio.file.FileSystem;
-import java.util.Observable;
 
 public class PrimeController {
-  File workingDir;
+  private File workingDir; // For filechoosers.
 
   @FXML
-  TextField txtFName, txtLName, txtAddress, txtCity,
+  private TextField txtFName, txtLName, txtAddress, txtCity,
           txtState, txtZip, txtPhone, txtEmail, txtQuant, txtTotal;
 
   @FXML
-  Button btnSubCust, btnClearCust, btnSubOrder, btnClearOrder;
+  private Button btnSubCust, btnClearCust, btnSubOrder, btnClearOrder;
 
   @FXML
-  ComboBox comboCust, comboProd;
+  private ComboBox comboCust, comboProd;
 
   @FXML
-  RadioButton radCash, radCred, radNextDay, radTwoDay, radStandard;
+  private RadioButton radCash, radCred, radNextDay, radTwoDay, radStandard;
 
   @FXML
-  CheckBox checkWar;
+  private CheckBox checkWar;
 
   @FXML
-  TableView custTable, prodTable, orderTable;
+  private TableView custTable, prodTable, orderTable;
 
   @FXML
-  Slider sliderQuant;
+  private Slider sliderQuant;
 
+  // Deep breath before trying to say all this without stopping
   @FXML
-  TableColumn colCustAddr, colCustCell, colCustCity, colCustID, colCustFName, colCustLName, colCustState,
+  private TableColumn colCustAddr, colCustCell, colCustCity, colCustID, colCustFName, colCustLName, colCustState,
           colCustZip, colCustEmail, colOrderCustName, colOrderPayment, colOrderProdName, colOrderQuant, colOrderShipping,
           colOrderSubtotal, colOrderWarranty, colProdNumInStock, colProdProdID, colProdProdName, colProdUnitCost;
 
   @FXML
-  ToggleGroup shippingGroup, paymentGroup;
+  private ToggleGroup shippingGroup, paymentGroup;
 
-  ObservableList<Customer> custList;
-  ObservableList<Order> orders;
-  ObservableList<Product> products;
+  private ObservableList<Customer> custList;
+  private ObservableList<Order> orders;
+  private ObservableList<Product> products;
 
-  Order protoOrder;
+  // When changes are made to the order, this is updated to match.
+  // When changes are submitted, this is submitted and re-made.
+  private Order protoOrder;
 
+  /**
+   * Adds handlers for all buttons, as well as handling tables.
+   */
   void addHandlers() {
 
     this.initLists();
@@ -66,6 +79,9 @@ public class PrimeController {
     this.addCustHandlers();
   }
 
+  /**
+   * Loads user selected files into the products/customers/orders databases
+   */
   private void initLists() {
     Window window = txtFName.getScene().getWindow();
     FileChooser chooser = new FileChooser();
@@ -85,6 +101,9 @@ public class PrimeController {
     protoOrder = new Order(this.custList, this.products);
   }
 
+  /**
+   * Makes all tables point at the proper attributes.
+   */
   private void initTables() {
     this.custTable.setItems(this.custList);
     this.orderTable.setItems(this.orders);
@@ -120,10 +139,16 @@ public class PrimeController {
     }
   }
 
+  /**
+   * Updates the txtTotal widget with the price of the current order.
+   */
   private void updateSubtotal() {
     this.txtTotal.setText(this.protoOrder.getSubtotalFmt());
   }
 
+  /**
+   * Adds all onAction handlers for the order screen
+   */
   private void addOrderHandlers() {
     final int
             CUST_VALID = 0,
@@ -239,13 +264,9 @@ public class PrimeController {
     });
   }
 
-  private void printAr(boolean[] ar) {
-    for(boolean a : ar)
-      System.out.print(a + ", ");
-
-    System.out.println();
-  }
-
+  /**
+   * Adds all onAction hanlders for the customer adder screen.
+   */
   private void addCustHandlers() {
     final int
             FNAME_VALID = 0,
@@ -319,6 +340,11 @@ public class PrimeController {
 
   }
 
+  /**
+   * Checks if an array of bools is all true
+   * @param ar The array to check
+   * @return Whether EVERY item in the array is true
+   */
   public static boolean testAll(boolean[] ar) {
     boolean res = ar[0];
 
@@ -328,6 +354,9 @@ public class PrimeController {
     return res;
   }
 
+  /**
+   * Saves the databases back to user selected files.
+   */
   public void showSavers() {
     Window window = txtFName.getScene().getWindow();
     FileChooser chooser = new FileChooser();

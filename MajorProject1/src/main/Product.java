@@ -1,3 +1,13 @@
+/**
+ * Major Project 1
+ * CSIS 335 - GUIs]
+ *
+ * Author: Johnathan Lee
+ * Due: 10/15/18
+ *
+ * A simple cash register interface. Allows adding customer details and ordering products, while also tracking how
+ * many of each product is on hand.
+ */
 package main;
 
 import javafx.collections.ObservableList;
@@ -13,12 +23,14 @@ public class Product {
   private static final Pattern parsePattern = Pattern.compile("([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)\\|([^\\|]+)");
   private static final DecimalFormat fmt = new DecimalFormat("$###,###.00");
 
-  private static int lastID = 0;
-
   int prodID, inStock;
   String prodName;
   BigDecimal unitCost;
 
+  /**
+   * A nicer looking getUnitCost
+   * @return unitCost formatted into $500,000.00 style strings.
+   */
   public String getUnitCostFmt() {
     return fmt.format(this.getUnitCost().doubleValue());
   }
@@ -55,11 +67,20 @@ public class Product {
     this.unitCost = unitCost;
   }
 
+  /**
+   * @return A string containing the Product ID and name
+   */
   @Override
   public String toString() {
     return "[ID: " + this.getProdID() + "] " + this.prodName;
   }
 
+
+  /**
+   * Loads all products from a file
+   * @param inFile The file to read from
+   * @return An arraylist containing all products in inFile
+   */
   public static ArrayList<Product> parseFile(File inFile) {
     ArrayList<Product> res = new ArrayList<>();
     try {
@@ -87,10 +108,18 @@ public class Product {
     return res;
   }
 
+  /**
+   * @return A deserializable string representation of this
+   */
   public String serialize() {
     return String.format("%s|%s|%s|%s", this.prodID, this.inStock, this.prodName, this.unitCost);
   }
 
+  /**
+   * Writes an array of Products to a file
+   * @param outFile File to write to
+   * @param list List to write
+   */
   public static void serialize(File outFile, ObservableList<Product> list) {
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
@@ -102,6 +131,13 @@ public class Product {
     }
   }
 
+  /**
+   * Main constructor for product
+   * @param prodID Product ID. Must be unique
+   * @param inStock How many of the product are currently in stock
+   * @param prodName Name of the product
+   * @param unitCost How much EACH of the product costs
+   */
   public Product(int prodID, int inStock, String prodName, BigDecimal unitCost) {
     this.prodID = prodID;
     this.inStock = inStock;

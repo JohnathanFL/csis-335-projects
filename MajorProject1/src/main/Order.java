@@ -1,8 +1,18 @@
+/**
+ * Major Project 1
+ * CSIS 335 - GUIs]
+ * <p>
+ * Author: Johnathan Lee
+ * Due: 10/15/18
+ * <p>
+ * A simple cash register interface. Allows adding customer details and ordering products, while also tracking how
+ * many of each product is on hand.
+ */
+
 package main;
 
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 import java.io.*;
 import java.math.BigDecimal;
@@ -22,6 +32,17 @@ public class Order {
   private ObservableList<Customer> custTable;
   private ObservableList<Product> prodTable;
 
+  /**
+   * Main constructor for Order. Creates a new order with all of its attributes all at once.
+   * @param custTable
+   * @param prodTable
+   * @param custID
+   * @param prodID
+   * @param quantity
+   * @param shipping
+   * @param payment
+   * @param hasWarranty
+   */
   public Order(ObservableList<Customer> custTable, ObservableList<Product> prodTable, int custID, int prodID,
                int quantity, Shipping shipping, Payment payment, boolean hasWarranty) {
     this.custID = custID;
@@ -37,6 +58,9 @@ public class Order {
 
   }
 
+  /**
+   * Recalculates this.subtotal.
+   */
   public void updateSubtotal() {
     FilteredList<Product> list = prodTable.filtered(p -> p.getProdID() == this.prodID);
     System.out.println(this.serialize());
@@ -52,16 +76,32 @@ public class Order {
                     .add(BigDecimal.valueOf(hasWarranty ? 5.99 : 0.00).multiply(new BigDecimal(this.quantity)));
   }
 
+  /**
+   * Creates a string representation of this that can be serialized/deserialized.
+   * @return
+   */
   public String serialize() {
     return String.format("%s|%s|%s|%s|%s|%s", this.custID, this.prodID, this.quantity, this.shipping, this.payment, this.hasWarranty);
   }
 
+  /**
+   * Inits an order with decent default values and the databases
+   * @param custTable
+   * @param products
+   */
   public Order(ObservableList<Customer> custTable, ObservableList<Product> products) {
     this.quantity = 1;
     this.custTable = custTable;
     this.prodTable = products;
   }
 
+  /**
+   * Gets all Orders in a file.
+   * @param inFile The file to read from
+   * @param custTable The table containing the customers referenced in inFile.
+   * @param prodTable The table containing the products referenced in inFile.
+   * @return An arraylist containing all orders from inFile
+   */
   public static ArrayList<Order> parseFile(File inFile, ObservableList<Customer> custTable,
                                            ObservableList<Product> prodTable) {
     ArrayList<Order> res = new ArrayList<>();
@@ -92,6 +132,11 @@ public class Order {
     return res;
   }
 
+  /**
+   * Serializes an entire list of Orders, using the internal serialize function
+   * @param outFile File to write to
+   * @param list Orders to write
+   */
   public static void serialize(File outFile, ObservableList<Order> list) {
     try {
       BufferedWriter writer = new BufferedWriter(new FileWriter(outFile, false));
@@ -151,22 +196,37 @@ public class Order {
     this.hasWarranty = hasWarranty;
   }
 
+  /**
+   * Sugar for getting the full name of a customer
+   */
   public String getFullName() {
     // Should only ever be one in the returned list, so we can just take the first anyway.
     Customer thisCust = this.custTable.filtered(cust -> cust.getCustID() == this.custID).get(0);
     return thisCust.getFirstName() + " " + thisCust.getLastName();
   }
 
+  /**
+   * Gets the name of a product based on the prodID and associated product table.
+   * @return
+   */
   public String getProdName() {
     // See comment in getFullName
     return this.prodTable.filtered(prod -> prod.getProdID() == this.prodID).get(0).getProdName();
   }
 
+  /**
+   * Gets a nicely formatted version of the subtotal.
+   * @return
+   */
   public String getSubtotalFmt() {
     this.updateSubtotal();
     return fmt.format(this.subtotal.floatValue());
   }
 
+  /**
+   * How the order is being shipped.
+   * Based on standard shipping speeds.
+   */
   public enum Shipping {
     NextDay(BigDecimal.valueOf(10.0)), TwoDay(BigDecimal.valueOf(5.99)), Standard(BigDecimal.valueOf(2.99));
 
@@ -180,6 +240,11 @@ public class Order {
       this.price = price;
     }
 
+    /**
+     * Deserializes a string into a Shipping
+     * @param from String to read from
+     * @return What the string represents, or Standard if it was invalid
+     */
     public static Shipping fromString(String from) {
       for (int i = 0; i < strMap.length; i++)
         if (strMap[i].equals(from))
@@ -188,6 +253,10 @@ public class Order {
       return Standard;
     }
 
+    /**
+     * Serializes a shipping into a string
+     * @return The human readable name of this, or "Invalid Enum" if it's... well, invalid.
+     */
     @Override
     public String toString() {
       for (int i = 0; i < shipMap.length; i++)
@@ -197,7 +266,6 @@ public class Order {
       return "Invalid Enum";
     }
 
-
     public BigDecimal getPrice() {
       return price;
     }
@@ -205,6 +273,10 @@ public class Order {
 
   }
 
+  /**
+   * How the customer is paying for this order.
+   * Paying by credit card adds a 5% processing fee.
+   */
   public enum Payment {
     Cash(0), Credit(0.05);
 

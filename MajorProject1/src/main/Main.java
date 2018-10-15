@@ -1,15 +1,23 @@
+/**
+ * Major Project 1
+ * CSIS 335 - GUIs]
+ *
+ * Author: Johnathan Lee
+ * Due: 10/15/18
+ *
+ * A simple cash register interface. Allows adding customer details and ordering products, while also tracking how
+ * many of each product is on hand.
+ */
+
 package main;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
-import org.omg.CORBA.PRIVATE_MEMBER;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +48,7 @@ public class Main extends Application {
     splashStage.initStyle(StageStyle.UNDECORATED);
     splashStage.show();
 
-    // practically straight from Program5. Still surprised jfx has no built in for a splash screen.
+    // Practically straight from Program5. Still surprised jfx has no built in for a splash screen.
     AnimationTimer timer = new AnimationTimer() {
       long /** Last timestamp recorded */
               prev = -1,

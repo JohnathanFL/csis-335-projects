@@ -1,3 +1,2 @@
 1|1|2|Standard|Cash|true
-1|1|4|Two Day|Credit|true
-2|1|5|Next Day|Cash|false
+2|2|11|Next Day|Cash|false
