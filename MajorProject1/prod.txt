@@ -1,3 +1,3 @@
-1|20|Sworn Sword|59.50
-2|39|Healing Potion|5.99
+1|20|Enchanted Sword|59.50
 3|1|The Best Sword You've Laid Eyes Upon|5999.99
+2|34|Healing Potion|5.99

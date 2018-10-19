@@ -1,2 +1,2 @@
-1|Johnathan|Lee|8030 Padre Way NE|Otsego|MN|55330|763-321-0398|763-321-0398
-2|Qiye|Li|5950 Immortal Avenue|Ancient City|Middle Kingdom|5950|123-123-1234|sdf@sdf.org
+1|Johnathan|Lee|Holmquist Hall 363|Moorhead|MN|56565|763-321-0398|763-321-0398
+2|Jimmy|Test|Tester Way|Moorhead|MN|56565|123-123-1234|sdf@sdf.org
