@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 
-
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="172.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
    <children>
       <TabPane layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -93,7 +92,7 @@
                               <TextField fx:id="prodDescField" promptText="description" />
                               <TextField fx:id="unitCostField" promptText="unit cost" GridPane.columnIndex="1" />
                               <TextField fx:id="qtyField" promptText="qty on hand" GridPane.columnIndex="2" />
-                              <Button fx:id="addCustBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add Customer" GridPane.columnSpan="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
+                              <Button fx:id="addProdBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Add Product" GridPane.columnSpan="3" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" />
                            </children>
                         </GridPane>
                         <Label fx:id="prodLbl" text="A Product">
