@@ -1,15 +1,25 @@
+/**
+ * Author: Johnathan Lee
+ * MSUM CSIS 335 - Program 6
+ *
+ * Due 10/26/18
+ *
+ * Connects to a databse of customers and products, then retrieves a local copy and allows the user to move through/update it.
+ */
 package main;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import jdk.nashorn.internal.runtime.ECMAException;
 
-import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.ArrayList;
 
+/**
+ * Struct for holding basic customer information
+ * Would be nice if Java had tuples for this
+ */
 class Customer {
 
   public Customer(String id, String first, String last, String phone) {
@@ -27,6 +37,9 @@ class Customer {
   }
 }
 
+/**
+ * Struct for holding basic product information
+ */
 class Product {
   public Product(String id, String desc, String cost, String inStock) {
     this.id = id;
@@ -51,7 +64,7 @@ public class Controller {
       refreshBtn;
 
   @FXML
-  Label prodLbl, custLbl;
+  Label prodIDLbl, custIDLbl, custFirstLbl, custLastLbl, custPhoneLbl, prodDescLbl, prodCostLbl, prodStockLbl;
 
   @FXML
   TextField prodDescField, unitCostField, qtyField, firstNameField, lastNameField, phoneField;
@@ -64,6 +77,9 @@ public class Controller {
 
   Connection conn;
 
+  /**
+   * Pulls down all information from the server, saving us from having to make a new query for every click
+   */
   public void refresh() {
 
 
@@ -94,15 +110,30 @@ public class Controller {
 
   }
 
+  /**
+   * Updates labels depending on the current customer/product index
+   */
   public void updateLabels() {
-    this.prodLbl.setText(this.products.get(this.curProdIndex).toString());
-    this.custLbl.setText(this.customers.get(this.curCustIndex).toString());
+    Customer curCust = this.customers.get(this.curCustIndex);
+    Product curProd = this.products.get(this.curProdIndex);
+
+    this.custIDLbl.setText(curCust.id);
+    this.custFirstLbl.setText(curCust.first);
+    this.custLastLbl.setText(curCust.last);
+    this.custPhoneLbl.setText(curCust.phone);
+
+    this.prodIDLbl.setText(curProd.id);
+    this.prodDescLbl.setText(curProd.desc);
+    this.prodCostLbl.setText(curProd.cost);
+    this.prodStockLbl.setText(curProd.inStock);
   }
 
-  public int clamp(int num, int min, int max) {
-    return (num > max ? max : (num < min ? min : num));
-  }
-
+  /**
+   * Tests an array to see if it's all true.
+   * Really need to move to a bitset
+   * @param bools Array to test
+   * @return if the array is all true
+   */
   public boolean testAll(boolean[] bools) {
     boolean res = bools[0];
     for (boolean b : bools)
@@ -111,6 +142,9 @@ public class Controller {
     return res;
   }
 
+  /**
+   * Clear all fields
+   */
   public void clears() {
     this.qtyField.clear();
     this.unitCostField.clear();
