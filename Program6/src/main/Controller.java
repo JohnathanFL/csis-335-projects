@@ -14,49 +14,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
- * Struct for holding basic customer information
- * Would be nice if Java had tuples for this
+ * Basic rundown for how this all works:
+ *
+ * 1. Connect to the database, pull down all info and store it in local ArrayLists of Customers/Products
+ * 2. Update labels to make it work
+ * 3. User clicks...
+ *    3.1 Refresh -> Goes back to step 1
+ *    3.2 Submit customer -> INSERT INTO's a new customer, goes back to step 1
+ *    3.3 Submit Product -> INSERT INTO's a new Product, goes back to step 1
  */
-class Customer {
-
-  public Customer(String id, String first, String last, String phone) {
-    this.id = id;
-    this.first = first;
-    this.last = last;
-    this.phone = phone;
-  }
-
-  String id, first, last, phone;
-
-  @Override
-  public String toString() {
-    return String.format("ID: %s, Name: %s, %s, Phone: %s", this.id, this.last, this.first, this.phone);
-  }
-}
-
-/**
- * Struct for holding basic product information
- */
-class Product {
-  public Product(String id, String desc, String cost, String inStock) {
-    this.id = id;
-    this.desc = desc;
-    this.cost = cost;
-    this.inStock = inStock;
-  }
-
-  @Override
-  public String toString() {
-    return String.format("ID: %s, Desc: %s, Cost: %s, Quantity on Hand: %s", this.id, this.desc, this.cost, this.inStock);
-  }
-
-  String id, desc, cost, inStock;
-}
-
-
 public class Controller {
   @FXML
   Button addCustBtn, addProdBtn,
@@ -69,13 +37,12 @@ public class Controller {
   @FXML
   TextField prodDescField, unitCostField, qtyField, firstNameField, lastNameField, phoneField;
 
-  int curCustIndex = 0, curProdIndex = 0;
-  int numCust = 0, numProd = 0;
-
-  ArrayList<Customer> customers = new ArrayList<>();
-  ArrayList<Product> products = new ArrayList<>();
 
   Connection conn;
+
+  PreparedStatement custSelector, prodSelector, custAdder, prodAdder;
+
+  ResultSet customers, products;
 
   /**
    * Pulls down all information from the server, saving us from having to make a new query for every click
@@ -83,30 +50,16 @@ public class Controller {
   public void refresh() {
 
 
-    ResultSet customers, products;
     try {
-      Statement statement = this.conn.createStatement();
-      customers = statement.executeQuery("SELECT * FROM Customer");
-
-
-      this.customers.clear();
-      while (customers.next())
-        this.customers.add(new Customer(customers.getString(1), customers.getString(2), customers.getString(3), customers.getString(4)));
-
-      products = statement.executeQuery("SELECT * FROM Product");
-
-      this.products.clear();
-      while (products.next())
-        this.products.add(new Product(products.getString(1), products.getString(2), products.getString(3), products.getString(4)));
-
+      this.customers = this.custSelector.executeQuery();
+      this.products = this.prodSelector.executeQuery();
     } catch (SQLException ex) {
       System.out.println("Failed to execute queries");
       System.out.println(ex);
       return;
     }
 
-    this.numCust = this.customers.size();
-    this.numProd = this.products.size();
+
 
   }
 
@@ -114,18 +67,21 @@ public class Controller {
    * Updates labels depending on the current customer/product index
    */
   public void updateLabels() {
-    Customer curCust = this.customers.get(this.curCustIndex);
-    Product curProd = this.products.get(this.curProdIndex);
 
-    this.custIDLbl.setText(curCust.id);
-    this.custFirstLbl.setText(curCust.first);
-    this.custLastLbl.setText(curCust.last);
-    this.custPhoneLbl.setText(curCust.phone);
 
-    this.prodIDLbl.setText(curProd.id);
-    this.prodDescLbl.setText(curProd.desc);
-    this.prodCostLbl.setText(curProd.cost);
-    this.prodStockLbl.setText(curProd.inStock);
+    try {
+      this.custIDLbl.setText(this.customers.getString(1));
+      this.custFirstLbl.setText(this.customers.getString(2));
+      this.custLastLbl.setText(this.customers.getString(3));
+      this.custPhoneLbl.setText(this.customers.getString(4));
+
+      this.prodIDLbl.setText(this.products.getString(1));
+      this.prodDescLbl.setText(this.products.getString(2));
+      this.prodCostLbl.setText(this.products.getString(3));
+      this.prodStockLbl.setText(this.products.getString(4));
+    } catch (SQLException e) {
+      System.out.println(e);
+    }
   }
 
   /**
@@ -156,8 +112,13 @@ public class Controller {
 
   @FXML
   public void initialize() {
+
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_prog6?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
+      this.custSelector = this.conn.prepareStatement("SELECT * FROM Customer;");
+      this.prodSelector = this.conn.prepareStatement("SELECT * FROM Product;");
+      this.custAdder = this.conn.prepareStatement("INSERT INTO Customer (firstName, lastName, phone) VALUES (?, ?, ?);");
+      this.prodAdder = this.conn.prepareStatement("INSERT INTO Product (prodDesc, unitCost, qtyOnHand) VALUES (?, ?, ?);");
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -167,20 +128,40 @@ public class Controller {
     refreshBtn.setOnAction(e -> refresh());
 
     nextProdBtn.setOnAction(e -> {
-      this.curProdIndex = (this.curProdIndex + 1) % this.numProd;
+      try {
+        if(!this.products.next())
+          this.products.first();
+      } catch (SQLException ex) {
+        System.out.println(ex);
+      }
       updateLabels();
     });
     prevProdBtn.setOnAction(e -> {
-      this.curProdIndex = ((this.curProdIndex - 1) + this.numProd) % this.numProd;
+      try {
+        if(!this.products.previous())
+          this.products.last();
+      } catch (SQLException ex) {
+        System.out.println(ex);
+      }
       updateLabels();
     });
 
     nextCustBtn.setOnAction(e -> {
-      this.curCustIndex = (this.curCustIndex + 1) % this.numCust;
+      try {
+        if(!this.customers.next())
+          this.customers.last();
+      } catch (SQLException ex) {
+        System.out.println(ex);
+      }
       updateLabels();
     });
     prevCustBtn.setOnAction(e -> {
-      this.curCustIndex = ((this.curCustIndex - 1) + this.numCust) % this.numCust;
+      try {
+        if(!this.customers.previous())
+          this.customers.last();
+      } catch (SQLException ex) {
+        System.out.println(ex);
+      }
       updateLabels();
     });
 
@@ -234,12 +215,9 @@ public class Controller {
 
     this.addCustBtn.setOnAction(e -> {
       try {
-        Statement stmt = this.conn.createStatement();
-        String query = String.format("INSERT INTO Customer (firstName, lastName, phone) VALUES (\"%s\", \"%s\", \"%s\");", this.firstNameField.getText(), this.lastNameField.getText(), this.phoneField.getText());
-        System.out.println(query);
-        stmt.execute(query);
-
-
+        setAll(this.custAdder, this.firstNameField.getText(), this.lastNameField.getText(), this.phoneField.getText());
+        System.out.println(this.custAdder);
+        this.custAdder.execute();
         refresh();
       } catch (Exception ex) {
         System.out.println(ex);
@@ -249,15 +227,31 @@ public class Controller {
 
     this.addProdBtn.setOnAction(e -> {
       try {
-        Statement stmt = this.conn.createStatement();
-        stmt.execute(String.format("INSERT INTO Product (prodDesc, unitCost, qtyOnHand) VALUES (\"%s\", \"%s\", \"%s\");", this.prodDescField.getText(), this.unitCostField.getText(), this.qtyField.getText()));
+        setAll(this.prodAdder, this.prodDescField.getText(), this.unitCostField.getText(), this.qtyField.getText());
+        System.out.println(this.prodAdder);
+        this.prodAdder.execute();
         refresh();
       } catch (Exception ex) {
         System.out.println(ex);
       }
       clears();
-
     });
 
+  }
+
+  /**
+   * Sugar for setting a bunch of parameters for a PreparedStatement
+   * @param stmt Statement to set params on
+   * @param things All things to set in stmt. First entered is index=1
+   */
+  public static void setAll(PreparedStatement stmt, Object ...things) {
+    try {
+      int i = 0;
+      for (Object thing : things) {
+        stmt.setObject(++i, thing);
+      }
+    } catch (SQLException e) {
+      System.out.println(e);
+    }
   }
 }
