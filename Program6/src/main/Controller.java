@@ -53,13 +53,17 @@ public class Controller {
     try {
       this.customers = this.custSelector.executeQuery();
       this.products = this.prodSelector.executeQuery();
+
+      this.customers.next();
+      this.products.next();
+
     } catch (SQLException ex) {
       System.out.println("Failed to execute queries");
       System.out.println(ex);
       return;
     }
 
-
+    updateLabels();
 
   }
 
@@ -67,7 +71,6 @@ public class Controller {
    * Updates labels depending on the current customer/product index
    */
   public void updateLabels() {
-
 
     try {
       this.custIDLbl.setText(this.customers.getString(1));
@@ -130,7 +133,7 @@ public class Controller {
     nextProdBtn.setOnAction(e -> {
       try {
         if(!this.products.next())
-          this.products.first();
+          this.products.absolute(1);
       } catch (SQLException ex) {
         System.out.println(ex);
       }
@@ -149,7 +152,7 @@ public class Controller {
     nextCustBtn.setOnAction(e -> {
       try {
         if(!this.customers.next())
-          this.customers.last();
+          this.customers.absolute(1);
       } catch (SQLException ex) {
         System.out.println(ex);
       }
