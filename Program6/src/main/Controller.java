@@ -18,38 +18,37 @@ import java.sql.*;
 /**
  * Basic rundown for how this all works:
  *
- * 1. Connect to the database, pull down all info and store it in local ArrayLists of Customers/Products
- * 2. Update labels to make it work
- * 3. User clicks...
- *    3.1 Refresh -> Goes back to step 1
- *    3.2 Submit customer -> INSERT INTO's a new customer, goes back to step 1
- *    3.3 Submit Product -> INSERT INTO's a new Product, goes back to step 1
+ * 1. Connects to the database.
+ * 2. Pull down all info and keeps it in result sets.
+ * 3. Update labels to make it work
+ * 4. User clicks...
+ *    .1. Refresh -> Goes back to step 2
+ *    .2. Submit customer -> INSERT INTO's a new customer, goes back to step 1
+ *    .3. Submit Product -> INSERT INTO's a new Product, goes back to step 1
  */
 public class Controller {
   @FXML
-  Button addCustBtn, addProdBtn,
+  private Button addCustBtn, addProdBtn,
       prevProdBtn, nextProdBtn, prevCustBtn, nextCustBtn,
       refreshBtn;
 
   @FXML
-  Label prodIDLbl, custIDLbl, custFirstLbl, custLastLbl, custPhoneLbl, prodDescLbl, prodCostLbl, prodStockLbl;
+  private Label prodIDLbl, custIDLbl, custFirstLbl, custLastLbl, custPhoneLbl, prodDescLbl, prodCostLbl, prodStockLbl;
 
   @FXML
-  TextField prodDescField, unitCostField, qtyField, firstNameField, lastNameField, phoneField;
+  private TextField prodDescField, unitCostField, qtyField, firstNameField, lastNameField, phoneField;
 
 
-  Connection conn;
+  private Connection conn;
 
-  PreparedStatement custSelector, prodSelector, custAdder, prodAdder;
+  private PreparedStatement custSelector, prodSelector, custAdder, prodAdder;
 
-  ResultSet customers, products;
+  private ResultSet customers, products;
 
   /**
    * Pulls down all information from the server, saving us from having to make a new query for every click
    */
   public void refresh() {
-
-
     try {
       this.customers = this.custSelector.executeQuery();
       this.products = this.prodSelector.executeQuery();
@@ -62,9 +61,7 @@ public class Controller {
       System.out.println(ex);
       return;
     }
-
     updateLabels();
-
   }
 
   /**
@@ -115,9 +112,10 @@ public class Controller {
 
   @FXML
   public void initialize() {
-
     try {
-      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_prog6?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
+      String url = "jdbc:mysql://localhost:3306/leejo_prog6",
+              fixerString = "?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false";
+      conn = DriverManager.getConnection(url + fixerString, "leejo", "OverlyUnderlyPoweredMS");
       this.custSelector = this.conn.prepareStatement("SELECT * FROM Customer;");
       this.prodSelector = this.conn.prepareStatement("SELECT * FROM Product;");
       this.custAdder = this.conn.prepareStatement("INSERT INTO Customer (firstName, lastName, phone) VALUES (?, ?, ?);");
