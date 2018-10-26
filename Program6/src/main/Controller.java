@@ -29,10 +29,10 @@ public class Controller {
   @FXML
   Button addCustBtn, addProdBtn,
       prevProdBtn, nextProdBtn, prevCustBtn, nextCustBtn,
-      refreshBtn;
+      refreshBtn, updateCustBtn;
 
   @FXML
-  Label prodIDLbl, custIDLbl, custFirstLbl, custLastLbl, custPhoneLbl, prodDescLbl, prodCostLbl, prodStockLbl;
+  Label prodIDLbl, custIDLbl;
 
   @FXML
   TextField prodDescField, unitCostField, qtyField, firstNameField, lastNameField, phoneField;
@@ -74,14 +74,14 @@ public class Controller {
 
     try {
       this.custIDLbl.setText(this.customers.getString(1));
-      this.custFirstLbl.setText(this.customers.getString(2));
-      this.custLastLbl.setText(this.customers.getString(3));
-      this.custPhoneLbl.setText(this.customers.getString(4));
+      this.firstNameField.setText(this.customers.getString(2));
+      this.lastNameField.setText(this.customers.getString(3));
+      this.phoneField.setText(this.customers.getString(4));
 
       this.prodIDLbl.setText(this.products.getString(1));
-      this.prodDescLbl.setText(this.products.getString(2));
-      this.prodCostLbl.setText(this.products.getString(3));
-      this.prodStockLbl.setText(this.products.getString(4));
+      this.prodDescField.setText(this.products.getString(2));
+      this.unitCostField.setText(this.products.getString(3));
+      this.qtyField.setText(this.products.getString(4));
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -118,8 +118,8 @@ public class Controller {
 
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_prog6?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
-      this.custSelector = this.conn.prepareStatement("SELECT * FROM Customer;");
-      this.prodSelector = this.conn.prepareStatement("SELECT * FROM Product;");
+      this.custSelector = this.conn.prepareStatement("SELECT * FROM Customer;", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+      this.prodSelector = this.conn.prepareStatement("SELECT * FROM Product;", ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
       this.custAdder = this.conn.prepareStatement("INSERT INTO Customer (firstName, lastName, phone) VALUES (?, ?, ?);");
       this.prodAdder = this.conn.prepareStatement("INSERT INTO Product (prodDesc, unitCost, qtyOnHand) VALUES (?, ?, ?);");
     } catch (SQLException e) {
@@ -238,6 +238,16 @@ public class Controller {
         System.out.println(ex);
       }
       clears();
+    });
+    this.updateCustBtn.setOnAction(e -> {
+      try {
+        this.customers.updateString(2, this.firstNameField.getText());
+        this.customers.updateString(3, this.lastNameField.getText());
+        this.customers.updateString(4, this.phoneField.getText());
+        this.customers.updateRow();
+      } catch (SQLException ex) {
+        System.out.println(ex);
+      }
     });
 
   }
