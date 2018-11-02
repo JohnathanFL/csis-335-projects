@@ -13,7 +13,7 @@
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                <children>
                   <Button fx:id="btnShowFirst" mnemonicParsing="false" text="Show First Name" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0" />
-                  <Label fx:id="lblFirst" layoutY="79.0" text="Label" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="79.0" />
+                  <Label fx:id="lblFirst" layoutY="79.0" text="" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="79.0" />
                </children></AnchorPane>
       </content>
     </TitledPane>

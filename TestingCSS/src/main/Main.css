@@ -1,0 +1,17 @@
+GridPane {
+    -fx-background-color: #2C3539;
+}
+
+.normal-label {
+    -fx-font-size: 20pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: #F87217;
+    -fx-opacity: 1;
+}
+
+.label-bright {
+    -fx-font-size: 40pt;
+    -fx-font-family: "Segoe UI Semibold";
+    -fx-text-fill: #F87217;
+    -fx-opacity: 1;
+}
