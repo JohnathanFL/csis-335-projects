@@ -1,3 +1,13 @@
+/**
+ * Author: Johnathan Lee
+ * Class: CSIS 335
+ *
+ * Due 11/05/18
+ *
+ * Program 7:
+ * Provides a simple display/query interface for a product database, along with an add/delete admin interface.
+ */
+
 package main;
 
 import javafx.beans.property.BooleanProperty;
@@ -16,6 +26,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Optional;
 
+/**
+ * Read as OR-d Bool Array
+ *
+ * Stores a number of bools and tracks the OR of the entire set within this.value
+ */
 class OredBoolArray {
   OredBoolArray(boolean...bools) {
     ar = bools;
@@ -23,6 +38,9 @@ class OredBoolArray {
     update();
   }
 
+  /**
+   * Updates this.value according to the OR of the set
+   */
   void update() {
     boolean res = ar[0];
     for(boolean b : ar)
@@ -33,11 +51,19 @@ class OredBoolArray {
     System.out.println(value);
   }
 
+  /**
+   * Sets an internal value to val within the array
+   * @param index Index of the value to set (0..size-1)
+   * @param val Value to place in said index
+   */
   public void set(int index, boolean val) {
     ar[index] = val;
     update();
   }
 
+  /**
+   * Use this if you want to query the value.
+   */
   public SimpleBooleanProperty value;
   boolean[] ar;
 
@@ -72,6 +98,11 @@ public class Controller {
   ObservableList<Product> products;
   ProductQueries queries;
 
+  /**
+   * Creates a login window.
+   * Does authentication through ProductQueries.checkLogin
+   * @return True if user entered correct credentials, false otherwise.
+   */
   public boolean loginBox() {
       Dialog<Pair<String, String>> dia = new Dialog<>();
       dia.setTitle("Enter admin credentials");
@@ -106,6 +137,7 @@ public class Controller {
 
       return false;
   }
+
 
   public void initialize() {
     try {
@@ -257,6 +289,7 @@ public class Controller {
     delProdBtn.disableProperty().bind(delProdValid);
     delProdBtn.setOnAction(e -> {
       queries.deleteProduct(Integer.parseInt(delProdID.getText()));
+      selectCombo.setValue(ProductQueries.selectAllName);
       delProdID.clear();
       delProdID.requestFocus();
     });

@@ -1,15 +1,4 @@
-/**
- * Author: Johnathan Lee
- * Class: CSIS 335
- *
- * Due 11/05/18
- *
- * Program 7:
- * Provides a simple display/query interface for a product database, along with an add/delete admin interface.
- */
-
-
-package main;
+package browser;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -21,8 +10,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("Main.fxml"));
-        primaryStage.setTitle("Product DB");
+        Parent root = FXMLLoader.load(getClass().getResource("Browser.fxml"));
+        primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.show();
     }

@@ -1,3 +1,14 @@
+/**
+ * Author: Johnathan Lee
+ * Class: CSIS 335
+ *
+ * Due 11/05/18
+ *
+ * Program 7:
+ * Provides a simple display/query interface for a product database, along with an add/delete admin interface.
+ */
+
+
 package main;
 
 import javafx.collections.FXCollections;
@@ -11,10 +22,18 @@ import java.sql.*;
 import java.util.ArrayList;
 
 
+/**
+ * Connection manager class.
+ * Also provides simple methods for calling prepared queries/inserting/deleting
+ */
 public class ProductQueries {
   static Connection conn;
   static ResultSet curResSet;
 
+  /**
+   * Primary constructor
+   * @throws SQLException If unable to connect to database or prepare any statements.
+   */
   ProductQueries() throws SQLException {
     final String url = "jdbc:mysql://localhost:3306/leejo_prog7?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", username = "leejo", password = "OverlyUnderlyPoweredMS";
     if(conn == null) {
@@ -25,11 +44,17 @@ public class ProductQueries {
       selectProductByCategory = conn.prepareStatement("select * from Product where lcase(category) like lcase(?);");
       selectProductWhereQtyOnHand = conn.prepareStatement("select * from Product where quantOnHand <= ?;");
       selectProductWhereUnitcost = conn.prepareStatement("select * from Product where unitCost <= ?;");
-      insertNewProduct = conn.prepareStatement("insert into Product (description, category, quantOnHand, unitCost, sellingPrice) values (?. ?, ?, ?, ?);");
+      insertNewProduct = conn.prepareStatement("insert into Product (description, category, quantOnHand, unitCost, sellingPrice) values (?, ?, ?, ?, ?);");
       deleteProduct = conn.prepareStatement("delete from Product where prodID = ?;");
     }
   }
 
+  /**
+   * Authenticates the login credentials
+   * @param username Username. Maps to database->Admin.username
+   * @param password Password. Will be hashed before comparison via String.hashCode. Maps to database->Admin.passwd
+   * @return
+   */
   public boolean checkLogin(String username, String password) {
     System.out.println(password.hashCode());
 
@@ -56,6 +81,10 @@ public class ProductQueries {
   // Only for admins:
       insertNewProduct, deleteProduct;
 
+  /**
+   * Turns the current resultset into an ArrayList
+   * @return
+   */
   public ArrayList<Product> makeArrayList() {
     ArrayList<Product> list = new ArrayList<>();
     try {
@@ -67,6 +96,10 @@ public class ProductQueries {
     return list;
   }
 
+  /**
+   * Gets a listing of all products. No exceptions. (literally)
+   * @return
+   */
   public ArrayList<Product> getAllProducts()  {
     try {
       curResSet = selectAllProducts.executeQuery();
@@ -75,6 +108,11 @@ public class ProductQueries {
     }
     return makeArrayList();
   }
+
+  /**
+   * @param category The product.category. (I.E offense, support, etc). Case insensitive.
+   * @return All products with the same category
+   */
   public ArrayList<Product> getProductByCategory(String category) {
    try {
     selectProductByCategory.setString(1, category);
@@ -85,6 +123,11 @@ public class ProductQueries {
   }
     return makeArrayList();
   }
+
+  /**
+   * @param qty The quantity to search for.
+   * @return All products with a quantOnHand of <= qty
+   */
   public ArrayList<Product> getProductByQuantity(int qty)  {
     try {
     selectProductWhereQtyOnHand.setInt(1, qty);
@@ -95,6 +138,11 @@ public class ProductQueries {
 
     return makeArrayList();
   }
+
+  /**
+   * @param cost The cost to search for
+   * @return All products with a unitCost of <= cost
+   */
   public ArrayList<Product> getProductsByUnitCost(BigDecimal cost) {
     try {
     selectProductWhereUnitcost.setBigDecimal(1, cost);
@@ -106,6 +154,17 @@ public class ProductQueries {
 
     return makeArrayList();
   }
+
+  /**
+   * Adds a new product to the database.
+   * ADMIN RESTRICTED
+   * @param desc The product's description
+   * @param cat The product's category
+   * @param quant The product's quantityOnHand
+   * @param unitCost The product's unitCost
+   * @param sellingPrice The product's sellingPrice (i.e including discounts)
+   * @return Whether adding the product executed successfully.
+   */
   public boolean addProduct(String desc, String cat, int quant, BigDecimal unitCost, BigDecimal sellingPrice) {
     try {
       insertNewProduct.setString(1, desc);
@@ -121,6 +180,12 @@ public class ProductQueries {
     }
     return false;
   }
+
+  /**
+   *
+   * @param id
+   * @return
+   */
   public boolean deleteProduct(int id) {
     try {
     deleteProduct.setInt(1, id);
