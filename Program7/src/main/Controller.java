@@ -10,9 +10,7 @@
 
 package main;
 
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
@@ -85,7 +83,7 @@ public class Controller {
   public TextField newProdQuant;
   public TextField newProdUnitCost;
   public TextField newProdSellingPrice;
-  public TextField delProdID;
+  public ComboBox<Product> delProdID;
   public Button refreshFieldBtn;
   public Button delProdBtn;
   public TextField fieldField;
@@ -138,6 +136,50 @@ public class Controller {
       return false;
   }
 
+  /**
+   * Refresh the products list
+   * @param which Which refresh style to use
+   */
+  public void refresh(String which) {
+    products.clear();
+
+    try {
+      if (which == ProductQueries.selectAllName) {
+        fieldField.clear();
+        fieldVBox.setVisible(false);
+        products.setAll(queries.getAllProducts());
+      } else if (which == ProductQueries.selectCategoryName) {
+        fieldField.clear();
+        fieldVBox.setVisible(true);
+        refreshFieldBtn.setOnAction(ev -> {
+          products.setAll(queries.getProductByCategory(fieldField.getText()));
+        });
+      } else if (which == ProductQueries.selectWhereQtyLTName) {
+        fieldField.clear();
+        fieldVBox.setVisible(true);
+        refreshFieldBtn.setOnAction(ev -> {
+          products.setAll(queries.getProductByQuantity(Integer.parseInt(fieldField.getText())));
+        });
+      } else if (which == ProductQueries.selectWhereUnitCostLTName) {
+        fieldField.clear();
+        fieldVBox.setVisible(true);
+        refreshFieldBtn.setOnAction(ev -> {
+          products.setAll(queries.getProductsByUnitCost(new BigDecimal(fieldField.getText())));
+        });
+      } else {
+        System.out.println("Invalid combo choice");
+      }
+    } catch (Exception ex) {
+      System.out.println(ex);
+    }
+
+    delProdID.getItems().clear();
+    for(Product prod : products) {
+      delProdID.getItems().add(prod);
+    }
+
+  }
+
 
   public void initialize() {
     try {
@@ -145,7 +187,8 @@ public class Controller {
 
       queries.updateComboBox(selectCombo);
       products = FXCollections.observableArrayList();
-      products.setAll(queries.getAllProducts());
+      selectCombo.setValue(ProductQueries.selectAllName);
+      refresh(ProductQueries.selectAllName);
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -168,35 +211,7 @@ public class Controller {
     /// Query stuff
     ///=================================================================================================================
     selectCombo.valueProperty().addListener((e, oldVal, newVal) -> {
-      try {
-        if (newVal == ProductQueries.selectAllName) {
-          fieldField.clear();
-          fieldVBox.setVisible(false);
-          products.setAll(queries.getAllProducts());
-        } else if (newVal == ProductQueries.selectCategoryName) {
-          fieldField.clear();
-          fieldVBox.setVisible(true);
-          refreshFieldBtn.setOnAction(ev -> {
-            products.setAll(queries.getProductByCategory(fieldField.getText()));
-          });
-        } else if (newVal == ProductQueries.selectWhereQtyLTName) {
-          fieldField.clear();
-          fieldVBox.setVisible(true);
-          refreshFieldBtn.setOnAction(ev -> {
-            products.setAll(queries.getProductByQuantity(Integer.parseInt(fieldField.getText())));
-          });
-        } else if (newVal == ProductQueries.selectWhereUnitCostLTName) {
-          fieldField.clear();
-          fieldVBox.setVisible(true);
-          refreshFieldBtn.setOnAction(ev -> {
-            products.setAll(queries.getProductsByUnitCost(new BigDecimal(fieldField.getText())));
-          });
-        } else {
-          System.out.println("Invalid combo choice");
-        }
-      } catch (Exception ex) {
-        System.out.println(ex);
-      }
+      refresh((String)newVal);
     });
 
     fieldField.textProperty().addListener((e, oldVal, newVal) -> {
@@ -269,6 +284,7 @@ public class Controller {
 
     addProdBtn.setOnAction(e -> {
       queries.addProduct(newProdDesc.getText(), newProdCat.getText(), Integer.parseInt(newProdQuant.getText()), new BigDecimal(newProdUnitCost.getText()), new BigDecimal(newProdSellingPrice.getText()));
+      refresh((String)selectCombo.getValue());
 
       newProdQuant.clear();
       newProdUnitCost.clear();
@@ -281,17 +297,15 @@ public class Controller {
     ///=================================================================================================================
     /// Delete Stuff
     ///=================================================================================================================
-    SimpleBooleanProperty delProdValid = new SimpleBooleanProperty(false);
-    delProdID.textProperty().addListener((e, oldVal, newVal) -> {
-      delProdValid.set(newVal.isEmpty());
-    });
 
-    delProdBtn.disableProperty().bind(delProdValid);
     delProdBtn.setOnAction(e -> {
-      queries.deleteProduct(Integer.parseInt(delProdID.getText()));
-      selectCombo.setValue(ProductQueries.selectAllName);
-      delProdID.clear();
-      delProdID.requestFocus();
+      if(delProdID.getValue() != null) {
+        queries.deleteProduct(delProdID.getValue().getProdID());
+        selectCombo.setValue(ProductQueries.selectAllName);
+        delProdID.setValue(null);
+        delProdID.requestFocus();
+        refresh((String) selectCombo.getValue());
+      }
     });
 
   }

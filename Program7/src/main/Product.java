@@ -44,14 +44,7 @@ public class Product {
 
   @Override
   public String toString() {
-    return "Product{" +
-        "prodID=" + prodID +
-        ", desc='" + desc + '\'' +
-        ", category='" + category + '\'' +
-        ", quantOnHand='" + quantOnHand + '\'' +
-        ", unitCost='" + unitCost + '\'' +
-        ", sellingPrice='" + sellingPrice + '\'' +
-        '}';
+    return "Product " + prodID + "(" + desc + ")";
   }
 
   public int getProdID() {

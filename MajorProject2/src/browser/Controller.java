@@ -6,9 +6,12 @@ import javafx.collections.transformation.FilteredList;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.KeyCode;
 import javafx.scene.web.WebView;
+import javafx.util.StringConverter;
 
 import java.sql.*;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,36 +20,42 @@ public class Controller {
   public TabPane browsingPane;
   public Button newTabBtn;
   public Button bookmarkBtn;
+  public Button newTabByURL;
   public Tab bookmarkTab, browsingTab;
   public TableView bookmarkTable;
   public TableColumn nameCol;
   public TableColumn timesVisitedCol;
   public TableColumn urlCol;
   public PieChart bkVisitedChart, domVisitedChart, tlDomVisitedChart;
+  public Slider visitedSlider;
 
   ObservableList<Bookmark> bookmarks;
 
   private static Connection conn;
-  private PreparedStatement selectAll, selectWhereLessThan, addNew, update;
+  private PreparedStatement selectAll, selectWhereGreaterThan, addNew, update, remove, maxVisits;
 
-  public void refreshBookmarks() {
+  public final Pattern urlPat = Pattern.compile("https?:\\/\\/(www\\.)?([a-z|A-Z|0-9]+)(\\.\\w+)\\/?(.*)");
+
+  private void refreshBookmarks() {
     bookmarks.clear();
     bkVisitedChart.getData().clear();
     domVisitedChart.getData().clear();
+    tlDomVisitedChart.getData().clear();
 
     try {
-      ResultSet res = selectAll.executeQuery();
+      selectWhereGreaterThan.setInt(1, (int)visitedSlider.getValue());
+      ResultSet res = selectWhereGreaterThan.executeQuery();
 
       while (res.next())
         bookmarks.add(new Bookmark(res));
 
 //      System.out.println(bkVisitedChart);
 
-      final Pattern domPatt = Pattern.compile("https?:\\/\\/(www\\.)?(.+)(\\.\\w+)(\\/?.*)");
+
       for(Bookmark bkmark : bookmarks) {
         bkVisitedChart.getData().add(new PieChart.Data(bkmark.name, bkmark.timesVisited));
 
-        Matcher matcher = domPatt.matcher(bkmark.url);
+        Matcher matcher = urlPat.matcher(bkmark.url);
         matcher.matches();
 
         // Main domain
@@ -72,6 +81,10 @@ public class Controller {
           }
         }
       }
+
+      ResultSet max = maxVisits.executeQuery();
+      max.next();
+      visitedSlider.setMax(max.getInt(1));
 
     } catch (SQLException e) {
       System.out.println(e);
@@ -129,13 +142,29 @@ public class Controller {
     root.getSelectionModel().select(browsingTab);
   }
 
+  public void remove(Bookmark bk) {
+    try {
+      remove.setString(1, bk.name);
+      remove.execute();
+    }catch (SQLException e) {
+      System.out.println(e);
+    }
+  }
+
   public void initialize() {
+    tlDomVisitedChart.setLegendVisible(false);
+    domVisitedChart.setLegendVisible(false);
+    bkVisitedChart.setLegendVisible(false);
+
+
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_bookmarks?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
       selectAll = conn.prepareStatement("select name, url, timesVisited from Bookmarks;");
-      selectWhereLessThan = conn.prepareStatement("select * from Bookmarks where Bookmarks.timesVisited < ?;");
+      selectWhereGreaterThan = conn.prepareStatement("select * from Bookmarks where Bookmarks.timesVisited > ?;");
       addNew = conn.prepareStatement("insert into Bookmarks (name, url, timesVisited) values (?, ?, ?);");
       update = conn.prepareStatement("update Bookmarks set timesVisited = ? where name = ?;");
+      remove = conn.prepareStatement("delete from Bookmarks where name like ?;");
+      maxVisits = conn.prepareStatement("select max(timesVisited) from Bookmarks;");
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -158,6 +187,14 @@ public class Controller {
 
 
     newTabBtn.setOnAction(e -> newTab("https://google.com"));
+    newTabByURL.setOnAction(e -> {
+      TextInputDialog dia = new TextInputDialog();
+      dia.getEditor().textProperty().addListener((ev, oldVal, newVal) -> {
+          dia.getDialogPane().lookupButton(ButtonType.OK).setDisable(!newVal.matches(urlPat.pattern()));
+      });
+
+      dia.showAndWait().ifPresent(this::newTab);
+    });
 
     bookmarkBtn.setOnAction(e -> {
       Tab curTab = browsingPane.getSelectionModel().getSelectedItem();
@@ -178,8 +215,45 @@ public class Controller {
 
     bookmarkTable.setOnMousePressed(event -> {
       if(event.isPrimaryButtonDown() && event.getClickCount() == 2) {
-        newTab(((Bookmark)bookmarkTable.getSelectionModel().getSelectedItem()).url);
+        newTab(((Bookmark) bookmarkTable.getSelectionModel().getSelectedItem()).url);
       }
     });
+
+    bookmarkTable.setOnKeyPressed(event -> {
+      if(event.getCode() == KeyCode.DELETE || event.getCode() == KeyCode.BACK_SPACE) {
+        ObservableList<Bookmark> selected = bookmarkTable.getSelectionModel().getSelectedItems();
+        if (selected.size() > 0){
+          for (Bookmark bookmark : selected)
+            remove(bookmark);
+
+          updateAndRefresh();
+        }
+      }
+    });
+    
+    
+    visitedSlider.setOnMouseReleased(e -> {
+      refreshBookmarks();
+    });
+
+    visitedSlider.setLabelFormatter(new StringConverter<Double>() {
+      @Override
+      public String toString(Double object) {
+        if(object.intValue() == -1)
+          return "All";
+        else
+          return String.format("%d", object.intValue());
+      }
+
+      @Override
+      public Double fromString(String string) {
+
+        if(string.equals("All"))
+          return -1.0;
+        else
+          return Double.parseDouble(string);
+      }
+    });
+
   }
 }

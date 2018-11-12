@@ -26,7 +26,7 @@
                         <VBox fx:id="fieldVBox" VBox.vgrow="ALWAYS">
                            <children>
                               <TextField fx:id="fieldField" maxWidth="1.7976931348623157E308" promptText="..." />
-                              <Button fx:id="refreshFieldBtn" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Apply" />
+                              <Button fx:id="refreshFieldBtn" alignment="BOTTOM_LEFT" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Apply" />
                            </children>
                         </VBox>
                      </children>
@@ -104,9 +104,9 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <TextField fx:id="delProdID" promptText="enter an ID..." GridPane.columnIndex="1" />
                               <Button fx:id="delProdBtn" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Delete Product" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="TOP" GridPane.vgrow="ALWAYS" />
                               <Label text="ID" />
+                              <ComboBox fx:id="delProdID" maxWidth="1.7976931348623157E308" prefWidth="150.0" promptText="Select a product to delete..." GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" />
                            </children>
                            <padding>
                               <Insets left="5.0" right="5.0" />
