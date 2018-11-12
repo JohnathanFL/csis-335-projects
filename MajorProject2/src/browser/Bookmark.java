@@ -1,3 +1,14 @@
+/**
+ * Author: Johnathan Lee
+ * MSUM CSIS 335
+ *
+ * Major Project 2
+ * Due 11/12/18
+ *
+ *
+ * A browser, using a mysql database in conjunction with built in web views and pie charts for showing stats.
+ */
+
 package browser;
 
 import javafx.scene.chart.PieChart;

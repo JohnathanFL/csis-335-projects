@@ -1,3 +1,18 @@
+.urlInputDia {
+    -fx-background-color: #2C3539;
+    -fx-text-fill: white;
+    -fx-text-base-color: white;
+}
+
+.urlInputDia .header-panel {
+    -fx-background-color: #2C3539;
+}
+
+.urlInputDia .header-panel  .label {
+    -fx-text-fill: white;
+}
+
+
 .slider .axis{
     -fx-tick-label-fill: white;
     -fx-tick-label-font-size: 1.5em;

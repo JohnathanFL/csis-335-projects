@@ -1,3 +1,14 @@
+/**
+ * Author: Johnathan Lee
+ * MSUM CSIS 335
+ *
+ * Major Project 2
+ * Due 11/12/18
+ *
+ *
+ * A browser, using a mysql database in conjunction with built in web views and pie charts for showing stats.
+ */
+
 package browser;
 
 import javafx.collections.FXCollections;
@@ -5,13 +16,16 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebView;
+import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
+import java.awt.*;
 import java.sql.*;
-import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,7 +46,7 @@ public class Controller {
   ObservableList<Bookmark> bookmarks;
 
   private static Connection conn;
-  private PreparedStatement selectAll, selectWhereGreaterThan, addNew, update, remove, maxVisits;
+  private PreparedStatement selectAll, selectMinVisited, addNew, update, remove, maxVisits;
 
   public final Pattern urlPat = Pattern.compile("https?:\\/\\/(www\\.)?([a-z|A-Z|0-9]+)(\\.\\w+)\\/?(.*)");
 
@@ -43,8 +57,8 @@ public class Controller {
     tlDomVisitedChart.getData().clear();
 
     try {
-      selectWhereGreaterThan.setInt(1, (int)visitedSlider.getValue());
-      ResultSet res = selectWhereGreaterThan.executeQuery();
+      selectMinVisited.setInt(1, (int)visitedSlider.getValue());
+      ResultSet res = selectMinVisited.executeQuery();
 
       while (res.next())
         bookmarks.add(new Bookmark(res));
@@ -132,9 +146,10 @@ public class Controller {
         Bookmark bookmark = bookmarks.filtered(bk -> bk.name.equals(newVal)).get(0);
         bookmark.timesVisited++;
         bookmark.changed = true;
-        System.out.println(bookmarks);
+        //System.out.println(bookmarks);
       } catch (IndexOutOfBoundsException ex) {
         // Didn't have a bookmark for that!
+        // Wish java wasn't so stupidly exception happy
       }
       updateAndRefresh();
     });
@@ -160,7 +175,7 @@ public class Controller {
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_bookmarks?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
       selectAll = conn.prepareStatement("select name, url, timesVisited from Bookmarks;");
-      selectWhereGreaterThan = conn.prepareStatement("select * from Bookmarks where Bookmarks.timesVisited > ?;");
+      selectMinVisited = conn.prepareStatement("select * from Bookmarks where Bookmarks.timesVisited >= ?;");
       addNew = conn.prepareStatement("insert into Bookmarks (name, url, timesVisited) values (?, ?, ?);");
       update = conn.prepareStatement("update Bookmarks set timesVisited = ? where name = ?;");
       remove = conn.prepareStatement("delete from Bookmarks where name like ?;");
@@ -192,6 +207,12 @@ public class Controller {
       dia.getEditor().textProperty().addListener((ev, oldVal, newVal) -> {
           dia.getDialogPane().lookupButton(ButtonType.OK).setDisable(!newVal.matches(urlPat.pattern()));
       });
+
+      dia.setHeaderText("Enter a URL to navigate to");
+      dia.setGraphic(new VBox());
+      dia.getDialogPane().getStylesheets().add(getClass().getResource("Style.css").toExternalForm());
+      dia.getDialogPane().getStyleClass().add("urlInputDia");
+      dia.initStyle(StageStyle.TRANSPARENT);
 
       dia.showAndWait().ifPresent(this::newTab);
     });
