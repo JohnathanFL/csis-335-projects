@@ -16,6 +16,10 @@ import javafx.scene.chart.PieChart;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Stores info about a bookmark.
+ * What did you think it would be?
+ */
 public class Bookmark {
   boolean changed = false;
   boolean isNew = false;

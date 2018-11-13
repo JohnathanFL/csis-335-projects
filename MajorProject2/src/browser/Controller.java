@@ -24,7 +24,6 @@ import javafx.scene.web.WebView;
 import javafx.stage.StageStyle;
 import javafx.util.StringConverter;
 
-import java.awt.*;
 import java.sql.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,6 +49,10 @@ public class Controller {
 
   public final Pattern urlPat = Pattern.compile("https?:\\/\\/(www\\.)?([a-z|A-Z|0-9]+)(\\.\\w+)\\/?(.*)");
 
+  /**
+   * Clears old data and refreshes it with whatever's in the database.
+   * Also refreshes charts.
+   */
   private void refreshBookmarks() {
     bookmarks.clear();
     bkVisitedChart.getData().clear();
@@ -105,6 +108,9 @@ public class Controller {
     }
   }
 
+  /**
+   * Updates the database with any changes we made, then refreshes (refreshBookmarks)
+   */
   public void updateAndRefresh() {
     try {
       for(Bookmark bookmark : bookmarks) {
@@ -128,6 +134,10 @@ public class Controller {
     refreshBookmarks();
   }
 
+  /**
+   * Makes a new tab
+   * @param url The url the tab starts at.
+   */
   public void newTab(String url) {
     WebView view = new WebView();
     Tab tab = new Tab("New Tab", view);
@@ -157,6 +167,10 @@ public class Controller {
     root.getSelectionModel().select(browsingTab);
   }
 
+  /**
+   * Deletes a bookmark. Frontend for statement this.remove
+   * @param bk Bookmark to remove (by page \<title\>)
+   */
   public void remove(Bookmark bk) {
     try {
       remove.setString(1, bk.name);
