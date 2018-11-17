@@ -10,6 +10,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import sun.awt.AWTAccessor;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class Controller {
   public Rectangle paddle2;
 
   double speedMult = 5.0;
-  Vec2 pongVeloc = new Vec2(-1,-0.25);
+  Vec2 pongVeloc = new Vec2(-1,-1);
 
 
   public void movePaddle(Rectangle paddle, Dir dir) {
@@ -157,10 +158,10 @@ public class Controller {
   }
 
 
-  static Integer handleAIInterval = 0;
+  Integer handleAIInterval = 0;
   private void handleAI() {
     // Only handle every 100 ticks
-    if(handleAIInterval++ < 5)
+    if(handleAIInterval++ < 10)
       return;
     else
       handleAIInterval = 0;
@@ -202,8 +203,18 @@ public class Controller {
     if(pongPos.x <= 1 || pongPos.x >= (maxX - 1.0))
       pongVeloc.x *= -1;
 
-    if(pongPos.y >= 450) { // 
-
+    if(pongPos.y >= 450) { // Top half of screen. Could be colliding with P2
+      if(pong.getBoundsInParent().intersects(paddle2.getBoundsInParent())) {
+        System.out.println("Hit P2");
+        pongVeloc.y *= -1;
+        pongVeloc.mult(1.5);
+      }
+    } else { // Bottom half of screen. Could be colliding with P1
+      if(pong.getBoundsInParent().intersects(paddle1.getBoundsInParent())) {
+        System.out.println("Hit P1");
+        pongVeloc.y *= -1;
+        pongVeloc.mult(1.5);
+      }
     }
 
     pongPos.add(pongVeloc);
@@ -231,7 +242,7 @@ public class Controller {
                 new Duration(16.667), // 60 FPS
                 ev -> {
                   State curState = stateStack.getFirst();
-                  System.out.println(stateStack.getFirst());
+                  //System.out.println(stateStack.getFirst());
                   switch (curState) {
                     case Quitting:
                       // TODO: Cleanup if needed
