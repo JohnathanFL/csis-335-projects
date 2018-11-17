@@ -2,20 +2,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
 public class Main {
   static final String weatherAPIKey = "b52ddf9b09e3335ad3e72b6d115d9545", ipInfoAPIKey = "552178a708c7ed100084d534730d10e6d68f4f40d91de09d9cc455ffae592b2b";
 
   private static void getLocInfoBasedOnCurrentIP() {
     try {
-      String data = getData("http://api.ipinfodb.com/v3/ip-city/&key=" + ipInfoAPIKey +"&format=json");
+      String data = getData("http://api.ipinfodb.com/v3/ip-city/?key=" + ipInfoAPIKey +"&format=json");
       System.out.println(data);
 
       JSONObject root = (JSONObject)(new JSONParser()).parse(data);
@@ -32,7 +30,7 @@ public class Main {
 
   private static void getWeatherData() {
     try {
-      String data = getData("http://api.openweathermap.org/data/2.5/weather&q=Fargo,us&APPID=" + weatherAPIKey);
+      String data = getData("http://api.openweathermap.org/data/2.5/weather?q=Fargo,us&appid=" + weatherAPIKey);
       System.out.println("Weather Data: " + data);
 
       JSONObject root = (JSONObject) (new JSONParser()).parse(data);

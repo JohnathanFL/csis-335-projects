@@ -1,0 +1,19 @@
+.root {
+
+}
+
+GridPane {
+    -fx-background-color: #2C3539;
+    -fx-border-color: #565D61;
+    -fx-border-width: 5px;
+}
+
+Label {
+    -fx-text-fill: white;
+    -fx-font-size: 2em;
+}
+
+Slider {
+    -fx-text-fill: white;
+    -fx-text-base-color: white;
+}
