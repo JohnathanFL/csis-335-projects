@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
@@ -16,57 +17,6 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Stack;
-
-class Vec2 {
-  public Vec2(Vec2 rhs) {
-    this.x = rhs.x;
-    this.y = rhs.y;
-  }
-
-  public Vec2(double x, double y) {
-    this.x = x;
-    this.y = y;
-  }
-
-  /**
-   * Get from anchor pane constraints
-   * @param node
-   */
-  public Vec2(Node node) {
-    this.x = AnchorPane.getLeftAnchor(node);
-    this.y = AnchorPane.getBottomAnchor(node);
-  }
-
-  /**
-   * Because for some reason Java won't let you overload. (Unless it's a string, but we don't talk about that)
-   * @param rhs Right side of the equation vec1 + vec2
-   */
-  public void add(Vec2 rhs) {
-    this.x += rhs.x;
-    this.y += rhs.y;
-
-  }
-
-  public void mult(double coeff) {
-    this.x *= coeff;
-    this.y *= coeff;
-  }
-
-  public void setConstraints(Node node) {
-    AnchorPane.setLeftAnchor(node, this.x);
-    AnchorPane.setBottomAnchor(node, this.y);
-  }
-
-  @Override
-  public String toString() {
-    return "Vec2{" +
-            "x=" + x +
-            ", y=" + y +
-            '}';
-  }
-
-  double x, y;
-}
 
 public class Controller {
   static final double maxX = (1600 * 0.75); // Game scene takes 75% of the stage
@@ -89,7 +39,7 @@ public class Controller {
   boolean[][] controlStates = {{false, false}, {false, false}}; // {paddle1: {leftCtrl, rightCtrl}, paddle2: ...
 
   public AnchorPane gameScene;
-  public Circle pong;
+  public Arc pong;
   public Rectangle paddle1;
   public Rectangle paddle2;
 
@@ -216,6 +166,8 @@ public class Controller {
         pongVeloc.mult(1.5);
       }
     }
+
+    pong.setStartAngle(pongVeloc.get360Angle());
 
     pongPos.add(pongVeloc);
 
