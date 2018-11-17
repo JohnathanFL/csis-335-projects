@@ -1,0 +1,9 @@
+GridPane VBox {
+    -fx-border-color: purple;
+    -fx-border-width: 10px;
+    -fx-background-color: white;
+}
+VBox > GridPane {
+    -fx-grid-line-color: purple;
+    -fx-border-width: 5px;
+}
