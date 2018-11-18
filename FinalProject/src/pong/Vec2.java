@@ -39,6 +39,17 @@ class Vec2 {
     this.y *= coeff;
   }
 
+  public double length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
+  }
+
+  public void normalize() {
+    double length = this.length();
+
+    this.x /= length;
+    this.y /= length;
+  }
+
   public double get360Angle() {
     // Angle in the first quadrant. ONLY IN THE FIRST QUADRANT, DUMMY. REMEMBER YOUR TRIG
     double angle = Math.toDegrees(Math.atan2(this.y, this.x));

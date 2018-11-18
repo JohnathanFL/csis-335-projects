@@ -3,7 +3,12 @@ package pong;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ObservableIntegerValue;
+import javafx.geometry.Bounds;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -19,50 +24,33 @@ import java.util.Deque;
 import java.util.Stack;
 
 public class Controller {
-  static final double maxX = (1600 * 0.75); // Game scene takes 75% of the stage
-  static final double paddleWidth = 150;
-  static final double paddleHeight = 50;
+  public AnchorPane gameScene;
+  public Arc pong = null;
+  public Rectangle paddle1 = null, paddle2 = null;
+  public Rectangle topGoal = null, bottomGoal = null;
+  public Label p1ScoreLbl = null;
+  public Label p2ScoreLbl = null;
+  public Label goalText = null;
 
-  public enum Dir {
-    Left, Right
-  }
-
-  public enum State {
-    Playing, Paused, P1Scored, P2Scored, Quitting
-  }
-
-  Deque<State> stateStack = new ArrayDeque<>();
   boolean p2IsBot = true;
 
-  int p1Score = 0, p2Score = 0;
+  Deque<State> stateStack = new ArrayDeque<>();
 
-  boolean[][] controlStates = {{false, false}, {false, false}}; // {paddle1: {leftCtrl, rightCtrl}, paddle2: ...
-
-  public AnchorPane gameScene;
-  public Arc pong;
-  public Rectangle paddle1;
-  public Rectangle paddle2;
-
-  double speedMult = 5.0;
-  Vec2 pongVeloc = new Vec2(-1,-1);
+  // {paddle1: {leftCtrl, rightCtrl}, paddle2: ..., pauseBtn
+  boolean[][] controlStates = {{false, false}, {false, false}, {false}};
 
 
-  public void movePaddle(Rectangle paddle, Dir dir) {
-    Vec2 pos = new Vec2(paddle);
-    if (dir == Dir.Right) {
+  Integer handleAIInterval = 0;
 
-      if (pos.x < (maxX - paddleWidth))
-        pos.x += 2 * speedMult;
-      else
-        pos.x = maxX - paddleWidth;
-    } else if (dir == Dir.Left){
-      if (pos.x > 0)
-        pos.x -= 2 * speedMult;
-      else
-        pos.x = 0.0;
-    }
+  public void setupHandlers() {
+    gameScene.getScene().setOnKeyReleased(key -> setKeyStatesTo(false, key.getCode()));
+    gameScene.getScene().setOnKeyPressed(key -> {
+      setKeyStatesTo(true, key.getCode());
 
-    pos.setConstraints(paddle);
+      if (key.getCode() == KeyCode.ESCAPE) {
+        controlStates[2][0] = true;
+      }
+    });
   }
 
   public void setKeyStatesTo(boolean bool, KeyCode key) {
@@ -89,29 +77,50 @@ public class Controller {
     //System.out.printf("Paddle1: %b, %b\nPaddle2: %b, %b\n\n", controlStates[0][0], controlStates[0][1], controlStates[1][0], controlStates[1][1]);
   }
 
-  public void setupHandlers() {
-    gameScene.getScene().setOnKeyReleased(key -> setKeyStatesTo(false, key.getCode()));
-    gameScene.getScene().setOnKeyPressed(key -> {
-      setKeyStatesTo(true, key.getCode());
+  public void initialize() {
 
-      if (key.getCode() == KeyCode.ESCAPE) {
-        if (stateStack.getFirst() != State.Paused) // Don't push infinite pauses onto the stack.
-          stateStack.push(State.Paused);
-        else
-          stateStack.pop();
-      }
-    });
+    State.state.init(pong, paddle1, paddle2, topGoal, bottomGoal, p1ScoreLbl, p2ScoreLbl, goalText);
+    stateStack.push(new PlayState());
+
+    Timeline tick = TimelineBuilder
+            .create()
+            .keyFrames(
+                    new KeyFrame(
+                            new Duration(16.667), // 60 FPS
+                            ev -> {
+                              if(p2IsBot)
+                                handleAI();
+
+                              State curState = stateStack.getFirst();
+                              //System.out.println(stateStack.getFirst());
+                              curState.handle(controlStates);
+                            }
+                    )
+            )
+            .cycleCount(Timeline.INDEFINITE)
+            .build();
+
+    tick.play();
+
+  }
+
+  public void handlePlaying() {
+
+
+
   }
 
   public void handlePaused() {
 
   }
 
+  public void handleWin(State which) {
 
-  Integer handleAIInterval = 0;
+  }
+
   private void handleAI() {
     // Only handle every 100 ticks
-    if(handleAIInterval++ < 10)
+    if (handleAIInterval++ < 10)
       return;
     else
       handleAIInterval = 0;
@@ -120,109 +129,18 @@ public class Controller {
     double xPos = AnchorPane.getLeftAnchor(paddle2),
             pongXPos = AnchorPane.getLeftAnchor(pong);
 
-    if(pongXPos <  xPos) {
+    if (pongXPos < xPos) {
       ctrls[0] = true;
       ctrls[1] = false;
-    }
-    else {
+    } else {
       ctrls[1] = true;
       ctrls[0] = false;
     }
   }
 
-  public void handlePlaying() {
-    if(p2IsBot)
-      handleAI();
-
-    if (controlStates[0][0])
-      movePaddle(paddle1, Dir.Left);
-
-    if (controlStates[0][1])
-      movePaddle(paddle1, Dir.Right);
-
-    if (controlStates[1][1])
-      movePaddle(paddle2, Dir.Right);
-
-    if (controlStates[1][0])
-      movePaddle(paddle2, Dir.Left);
-
-    Vec2 pongPos = new Vec2(pong);
-
-    //System.out.println("From " + pongPos);
-
-    if(pongPos.x <= 1 || pongPos.x >= (maxX - 1.0))
-      pongVeloc.x *= -1;
-
-    if(pongPos.y >= 450) { // Top half of screen. Could be colliding with P2
-      if(pong.getBoundsInParent().intersects(paddle2.getBoundsInParent())) {
-        System.out.println("Hit P2");
-        pongVeloc.y *= -1;
-        pongVeloc.mult(1.5);
-      }
-    } else { // Bottom half of screen. Could be colliding with P1
-      if(pong.getBoundsInParent().intersects(paddle1.getBoundsInParent())) {
-        System.out.println("Hit P1");
-        pongVeloc.y *= -1;
-        pongVeloc.mult(1.5);
-      }
-    }
-
-    pong.setStartAngle(pongVeloc.get360Angle());
-
-    pongPos.add(pongVeloc);
 
 
-    pongPos.setConstraints(pong);
-
-    //System.out.println("To " + pongPos);
-
-
-  }
-
-  public void handleWin(State which) {
-
-  }
-
-  public void initialize() {
-    stateStack.push(State.Quitting); // Should be the bottom-most state, so we can pop back to it.
-    stateStack.push(State.Playing);
-
-    Timeline tick = TimelineBuilder
-        .create()
-        .keyFrames(
-            new KeyFrame(
-                new Duration(16.667), // 60 FPS
-                ev -> {
-                  State curState = stateStack.getFirst();
-                  //System.out.println(stateStack.getFirst());
-                  switch (curState) {
-                    case Quitting:
-                      // TODO: Cleanup if needed
-                      break;
-
-                    case Playing:
-                      handlePlaying();
-                      break;
-
-                    case Paused:
-                      handlePaused();
-                      break;
-
-                    case P1Scored:
-                    case P2Scored:
-                      handleWin(curState);
-                      break;
-
-                    default:
-                      break;
-                  }
-                }
-            )
-        )
-        .cycleCount(Timeline.INDEFINITE)
-        .build();
-
-    tick.play();
-
+  public enum Dir {
+    Left, Right
   }
 }

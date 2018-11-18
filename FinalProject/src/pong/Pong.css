@@ -1,3 +1,7 @@
+AnchorPane {
+    -fx-border-color: purple;
+}
+
 GridPane VBox {
     -fx-border-color: purple;
     -fx-border-width: 10px;

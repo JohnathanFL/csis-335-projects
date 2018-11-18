@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
 
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1600.0" stylesheets="@Pong.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pong.Controller">
   <columnConstraints>
@@ -18,11 +22,19 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <AnchorPane fx:id="gameScene" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+      <AnchorPane fx:id="gameScene" maxHeight="900.0" maxWidth="1200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <children>
+            <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="5.0" layoutX="501.0" layoutY="324.0" stroke="BLACK" strokeType="INSIDE" width="1200.0" AnchorPane.bottomAnchor="450.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="450.0" />
             <Rectangle fx:id="paddle1" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="50.0" layoutX="72.0" layoutY="209.0" stroke="BLACK" strokeType="INSIDE" width="150.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="550.0" />
-            <Rectangle fx:id="paddle2" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="50.0" layoutX="125.0" layoutY="-50.0" stroke="BLACK" strokeType="INSIDE" width="150.0" AnchorPane.bottomAnchor="800.0" AnchorPane.leftAnchor="550.0" />
-            <Arc fx:id="pong" fill="DODGERBLUE" layoutX="590.0" layoutY="425.0" length="360.0" radiusX="25.0" radiusY="25.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" AnchorPane.bottomAnchor="450.0" AnchorPane.leftAnchor="564.9985370635986" />
+            <Rectangle fx:id="paddle2" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="50.0" layoutX="125.0" layoutY="-50.0" stroke="BLACK" strokeType="INSIDE" width="150.0" AnchorPane.bottomAnchor="800.0" AnchorPane.leftAnchor="550.0" />
+            <Arc fx:id="pong" fill="#b01fff" layoutX="590.0" layoutY="425.0" length="360.0" radiusX="25.0" radiusY="25.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" AnchorPane.bottomAnchor="450.0" AnchorPane.leftAnchor="564.9985370635986" />
+            <Rectangle fx:id="topGoal" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="26.0" layoutY="115.0" stroke="BLACK" strokeType="INSIDE" width="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+            <Rectangle fx:id="bottomGoal" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="15.0" layoutX="36.0" layoutY="125.0" stroke="BLACK" strokeType="INSIDE" width="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+            <Label fx:id="goalText" alignment="CENTER" contentDisplay="CENTER" layoutX="583.0" layoutY="253.0" text="GOOOOOOOOAAAAAAAL" visible="false" AnchorPane.leftAnchor="330.0">
+               <font>
+                  <Font size="41.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
       <VBox prefHeight="200.0" prefWidth="100.0">
@@ -33,15 +45,43 @@
                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
               </columnConstraints>
               <rowConstraints>
-                <RowConstraints minHeight="10.0" percentHeight="15.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" percentHeight="25.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" percentHeight="5.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label alignment="CENTER" contentDisplay="CENTER" text="PLAYER 1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                  <Label text="PLAYER 2" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                  <Label text="Score: " GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
-                  <Label text="Score: " GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                  <HBox prefHeight="0.0" prefWidth="0.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="Score: " HBox.hgrow="ALWAYS" />
+                        <Label fx:id="p1ScoreLbl" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="16.0" prefWidth="94.0" />
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="0.0" prefWidth="0.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="16.0" prefWidth="94.0" text="Score: " HBox.hgrow="ALWAYS" />
+                        <Label fx:id="p2ScoreLbl" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="16.0" prefWidth="94.0" />
+                     </children>
+                  </HBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <ImageView fitHeight="175.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
+                           </image>
+                        </ImageView>
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="PLAYER 1" textFill="#072dfa" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="200.0" prefWidth="100.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS">
+                     <children>
+                        <ImageView fitHeight="175.0" fitWidth="175.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
+                           </image>
+                        </ImageView>
+                        <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="PLAYER 2" textFill="RED" VBox.vgrow="ALWAYS" />
+                     </children>
+                  </VBox>
                </children>
             </GridPane>
          </children></VBox>
