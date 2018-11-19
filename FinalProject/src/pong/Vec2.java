@@ -4,7 +4,12 @@ import javafx.scene.Node;
 import javafx.scene.layout.AnchorPane;
 import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 
-class Vec2 {
+/**
+ * Basic Vec2 implementation. Only supports the ops needed for pong
+ */
+public class Vec2 {
+  public double x, y;
+
   public Vec2(Vec2 rhs) {
     this.x = rhs.x;
     this.y = rhs.y;
@@ -17,6 +22,7 @@ class Vec2 {
 
   /**
    * Get from anchor pane constraints
+   *
    * @param node
    */
   public Vec2(Node node) {
@@ -26,6 +32,7 @@ class Vec2 {
 
   /**
    * Because for some reason Java won't let you overload. (Unless it's a string, but we don't talk about that)
+   *
    * @param rhs Right side of the equation vec1 + vec2
    */
   public void add(Vec2 rhs) {
@@ -39,15 +46,15 @@ class Vec2 {
     this.y *= coeff;
   }
 
-  public double length() {
-    return Math.sqrt(this.x * this.x + this.y * this.y);
-  }
-
   public void normalize() {
     double length = this.length();
 
     this.x /= length;
     this.y /= length;
+  }
+
+  public double length() {
+    return Math.sqrt(this.x * this.x + this.y * this.y);
   }
 
   public double get360Angle() {
@@ -68,6 +75,4 @@ class Vec2 {
             ", y=" + y +
             '}';
   }
-
-  double x, y;
 }

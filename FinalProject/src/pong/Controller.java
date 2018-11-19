@@ -3,25 +3,17 @@ package pong;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableIntegerValue;
-import javafx.geometry.Bounds;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Arc;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import sun.awt.AWTAccessor;
+import pong.state.PlayState;
+import pong.state.State;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
-import java.util.Stack;
 
 public class Controller {
   public AnchorPane gameScene;
@@ -34,7 +26,7 @@ public class Controller {
 
   boolean p2IsBot = true;
 
-  Deque<State> stateStack = new ArrayDeque<>();
+  //Deque<State> stateStack = new ArrayDeque<>();
 
   // {paddle1: {leftCtrl, rightCtrl}, paddle2: ..., pauseBtn
   boolean[][] controlStates = {{false, false}, {false, false}, {false}};
@@ -80,7 +72,7 @@ public class Controller {
   public void initialize() {
 
     State.state.init(pong, paddle1, paddle2, topGoal, bottomGoal, p1ScoreLbl, p2ScoreLbl, goalText);
-    stateStack.push(new PlayState());
+    State.state.stateStack.push(new PlayState());
 
     Timeline tick = TimelineBuilder
             .create()
@@ -91,8 +83,7 @@ public class Controller {
                               if(p2IsBot)
                                 handleAI();
 
-                              State curState = stateStack.getFirst();
-                              //System.out.println(stateStack.getFirst());
+                              State curState = State.state.stateStack.getFirst();
                               curState.handle(controlStates);
                             }
                     )
@@ -101,20 +92,6 @@ public class Controller {
             .build();
 
     tick.play();
-
-  }
-
-  public void handlePlaying() {
-
-
-
-  }
-
-  public void handlePaused() {
-
-  }
-
-  public void handleWin(State which) {
 
   }
 

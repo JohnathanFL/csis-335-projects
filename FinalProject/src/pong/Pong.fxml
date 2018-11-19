@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.effect.Glow?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -68,6 +70,13 @@
                            <image>
                               <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
                            </image>
+                           <effect>
+                              <Glow level="0.48">
+                                 <input>
+                                    <DropShadow />
+                                 </input>
+                              </Glow>
+                           </effect>
                         </ImageView>
                         <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="PLAYER 1" textFill="#072dfa" VBox.vgrow="ALWAYS" />
                      </children>
@@ -78,6 +87,9 @@
                            <image>
                               <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
                            </image>
+                           <effect>
+                              <Glow />
+                           </effect>
                         </ImageView>
                         <Label alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" text="PLAYER 2" textFill="RED" VBox.vgrow="ALWAYS" />
                      </children>
