@@ -3,33 +3,40 @@ package pong;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import pong.state.PlayState;
 import pong.state.State;
+import pong.state.StateInfo;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Controller {
   public AnchorPane gameScene;
-  public Arc pong = null;
-  public Rectangle paddle1 = null, paddle2 = null;
-  public Rectangle topGoal = null, bottomGoal = null;
-  public Label p1ScoreLbl = null;
-  public Label p2ScoreLbl = null;
-  public Label goalText = null;
+  public Arc pong;
+  public Rectangle paddle1, paddle2;
+  public Rectangle topGoal, bottomGoal;
+  public Label p1ScoreLbl;
+  public Label p2ScoreLbl;
+  public Label goalText;
+  public Canvas gfx;
 
   boolean p2IsBot = true;
 
   //Deque<State> stateStack = new ArrayDeque<>();
 
   // {paddle1: {leftCtrl, rightCtrl}, paddle2: ..., pauseBtn
-  boolean[][] controlStates = {{false, false}, {false, false}, {false}};
+  public Map<String, Boolean> controls = new HashMap<>();
 
 
   Integer handleAIInterval = 0;
@@ -40,39 +47,52 @@ public class Controller {
       setKeyStatesTo(true, key.getCode());
 
       if (key.getCode() == KeyCode.ESCAPE) {
-        controlStates[2][0] = true;
+        controls.put("Pause", true);
       }
     });
   }
 
   public void setKeyStatesTo(boolean bool, KeyCode key) {
+    String which;
     switch (key) {
       case LEFT:
-        controlStates[0][0] = bool;
+        which = "P1Left";
         break;
 
       case RIGHT:
-        controlStates[0][1] = bool;
+        which = "P1Right";
         break;
 
       case A:
-        controlStates[1][0] = bool;
+        which = "P2Left";
         break;
 
       case D:
-        controlStates[1][1] = bool;
+        which = "P2Right";
+        break;
+
+      case ESCAPE:
+        which = "Pause";
+        break;
 
       default:
         return;
     }
+
+    controls.put(which, bool);
 
     //System.out.printf("Paddle1: %b, %b\nPaddle2: %b, %b\n\n", controlStates[0][0], controlStates[0][1], controlStates[1][0], controlStates[1][1]);
   }
 
   public void initialize() {
 
-    State.state.init(pong, paddle1, paddle2, topGoal, bottomGoal, p1ScoreLbl, p2ScoreLbl, goalText);
+    State.state.init(controls, pong, paddle1, paddle2, topGoal, bottomGoal, p1ScoreLbl, p2ScoreLbl, goalText);
     State.state.stateStack.push(new PlayState());
+    StateInfo info = State.state;
+
+    String[] usedMappings = {"P1Left", "P2Left", "P1Right", "P2Right", "Pause"};
+    for(String str : usedMappings)
+      controls.put(str, false);
 
     Timeline tick = TimelineBuilder
             .create()
@@ -83,8 +103,8 @@ public class Controller {
                               if(p2IsBot)
                                 handleAI();
 
-                              State curState = State.state.stateStack.getFirst();
-                              curState.handle(controlStates);
+                              State curState = info.stateStack.getFirst();
+                              curState.handle();
                             }
                     )
             )
@@ -102,16 +122,14 @@ public class Controller {
     else
       handleAIInterval = 0;
 
-    boolean[] ctrls = controlStates[1]; // P2 is index 1
-    double xPos = AnchorPane.getLeftAnchor(paddle2),
-            pongXPos = AnchorPane.getLeftAnchor(pong);
+    Vec2 paddlePos = new Vec2(paddle2), pongPos = new Vec2(pong);
 
-    if (pongXPos < xPos) {
-      ctrls[0] = true;
-      ctrls[1] = false;
+    if (pongPos.x < paddlePos.x) {
+      controls.put("P2Left", true);
+      controls.put("P2Right", false);
     } else {
-      ctrls[1] = true;
-      ctrls[0] = false;
+      controls.put("P2Left", false);
+      controls.put("P2Right", true);
     }
   }
 

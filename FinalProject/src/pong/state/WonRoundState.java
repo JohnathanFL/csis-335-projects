@@ -9,7 +9,7 @@ class WonRoundState implements State {
     this.winner = winner;
   }
 
-  public FlowControl handle(boolean[][] controlState) {
+  public FlowControl handle() {
     //System.out.println("Handling win");
     if(state.pong.getLength() > 1.0) {
       state.goalText.setVisible(true);

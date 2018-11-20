@@ -68,6 +68,10 @@ public class Vec2 {
     AnchorPane.setBottomAnchor(node, this.y);
   }
 
+  public Vec2 clone() {
+    return new Vec2(this);
+  }
+
   @Override
   public String toString() {
     return "Vec2{" +

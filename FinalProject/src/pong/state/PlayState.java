@@ -1,7 +1,6 @@
 package pong.state;
 
 import javafx.geometry.Bounds;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.shape.Rectangle;
 import pong.Controller;
 import pong.Vec2;
@@ -26,17 +25,16 @@ public class PlayState implements State {
     pos.setConstraints(paddle);
   }
 
-  public FlowControl handle(boolean[][] controlState) {
-    if (controlState[0][0])
+  public FlowControl handle() {
+    if (state.controls.get("P1Left"))
       movePaddle(state.paddle1, Controller.Dir.Left);
-
-    if (controlState[0][1])
+    if (state.controls.get("P1Right"))
       movePaddle(state.paddle1, Controller.Dir.Right);
 
-    if (controlState[1][1])
+    if (state.controls.get("P2Right"))
       movePaddle(state.paddle2, Controller.Dir.Right);
 
-    if (controlState[1][0])
+    if (state.controls.get("P2Left"))
       movePaddle(state.paddle2, Controller.Dir.Left);
 
     Vec2 pongPos = new Vec2(state.pong);

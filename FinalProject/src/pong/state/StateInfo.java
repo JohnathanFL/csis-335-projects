@@ -1,5 +1,6 @@
 package pong.state;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.scene.control.Label;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Rectangle;
@@ -7,6 +8,7 @@ import pong.Vec2;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Map;
 
 // I know, I know. Global state. In my defense, JavaFX ain't exactly built properly for a game to begin with.
 public class StateInfo {
@@ -22,8 +24,11 @@ public class StateInfo {
   public static final double paddleWidth = 150;
   public static final double paddleHeight = 50;
   public static final Vec2 middle = new Vec2(1600*0.75 / 2, 900 / 2);
+  public static final Vec2 paddleSize = new Vec2(150, 25);
 
-  public Vec2 pongVeloc = new Vec2(-1, -1);
+  Map<String, Boolean> controls;
+
+  public Vec2 pongVeloc = new Vec2(-1, -1), pongPos = middle.clone();
   public double speedMult = 5.0;
 
   public int roundNum = 1;
@@ -34,8 +39,9 @@ public class StateInfo {
     stateStack = new ArrayDeque<>();
   }
 
-  public void init(Arc pong, Rectangle paddle1, Rectangle paddle2, Rectangle topGoal, Rectangle bottomGoal,
+  public void init(Map<String, Boolean> controls, Arc pong, Rectangle paddle1, Rectangle paddle2, Rectangle topGoal, Rectangle bottomGoal,
                Label p1ScoreLbl, Label p2ScoreLbl, Label goalText) {
+    this.controls = controls;
     this.pong = pong;
     this.paddle1 = paddle1;
     this.paddle2 = paddle2;
