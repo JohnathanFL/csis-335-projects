@@ -10,10 +10,39 @@ GridPane {
 
 Label {
     -fx-text-fill: white;
-    -fx-font-size: 2em;
+    -fx-font-size: 1.7em;
 }
 
 Slider {
     -fx-text-fill: white;
     -fx-text-base-color: white;
+}
+
+Button {
+    -fx-background-color: #232A2E;
+    -fx-text-base-color: white;
+    -fx-background-radius: 0 0 0 0;
+}
+
+Button:hover {
+    -fx-background-color: #4F5558;
+    -fx-background-radius: 15 15 15 15;
+}
+
+
+Button:pressed {
+    -fx-background-color: #C5C7C8;
+    -fx-background-radius: 15 15 15 15;
+}
+
+TextField {
+    -fx-background-color: #232A2E;
+    -fx-text-fill: white;
+    -fx-background-radius: 0 0 0 0;
+}
+
+TextField:focused {
+    -fx-background-color: #4F5558;
+    -fx-text-fill: white;
+    -fx-background-radius: 15 15 15 15;
 }

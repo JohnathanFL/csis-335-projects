@@ -34,7 +34,7 @@ public class Controller {
   private JSONObject getData(String url) {
     try {
       HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
-      //System.out.println(con.getResponseCode());
+
       if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         return (JSONObject) new JSONParser().parse(in.lines().collect(Collectors.joining()));
@@ -51,8 +51,14 @@ public class Controller {
   public void refresh() {
 
     JSONObject data = getData("http://api.openweathermap.org/data/2.5/forecast?q=" + cityField.getText() + "," + countryField + "&appid=4d45ebfb65ad3710630352dc678c9091");
+    if(data == null) {
+      System.out.println("Unable to get weather data!");
+      System.exit(-1);
+    }
     JSONArray weatherAr = (JSONArray) data.get("list");
     int curDay = 0;
+
+    // For each day
     for (Node child : weatherBox.getChildren()) {
       GridPane grid = (GridPane) child;
       JSONObject weather = (JSONObject) weatherAr.get(curDay * 8);
@@ -60,22 +66,29 @@ public class Controller {
       JSONObject wind = (JSONObject) weather.get("wind");
       JSONObject weath = (JSONObject) ((JSONArray) weather.get("weather")).get(0);
 
+      // We must do the (Number).xxValue() stuff because if they happen to send it without trailing zeroes, it seems
+      // that the parser immediately assumes it's a long, and even if it has a .00, we can't get it automatically as a long
+      //
+      // In short, data may be long or double. We make sure it's always what we need.
       String[] fieldsTexts = {
           /*Date*/ new Date(((Long)weather.get("dt")) * 1000).toString().substring(0, 11),
           /*Desc*/ (String) weath.get("description"),
-          /*Temp*/ String.format("Temp: %.00f°C", ((Double) main.get("temp") - 273.15)),
-          /*Min Temp*/ String.format("Minimum: %.00f°C", ((Double) main.get("temp_min") - 273.15)),
-          /*Max Temp*/ String.format("Maximum: %.00f°C", ((Double) main.get("temp_max") - 273.15)),
-          /*Humidity*/ String.format("Humidity: %d%%", ((Long) main.get("humidity"))),
-          /*Windspeed*/ String.format("Windspeed: %.00f m/s", ((Double) wind.get("speed")))};
+          /*Temp*/ String.format("Temp: %.00f°C", (((Number) main.get("temp")).doubleValue() - 273.15)),
+          /*Min Temp*/ String.format("Minimum: %.00f°C", (((Number) main.get("temp_min")).doubleValue() - 273.15)),
+          /*Max Temp*/ String.format("Maximum: %.00f°C", (((Number)main.get("temp_max")).doubleValue() - 273.15)),
+          /*Humidity*/ String.format("Humidity: %d%%", ((Number)main.get("humidity")).longValue()),
+          /*Windspeed*/ String.format("Windspeed: %.00f m/s", ((Number)wind.get("speed")).doubleValue())
+      };
 
-      Image iconImg = new Image(getClass().getResource(((String) weath.get("icon")) + ".png").toExternalForm());
+      Image iconImg = new Image(getClass().getResource(((String) weath.get("icon")).replace('n', 'd') + ".png").toExternalForm());
 
       ObservableList<Node> fields = grid.getChildren();
       ImageView icon = (ImageView) fields.get(0);
       icon.setImage(iconImg);
 
+      // For each type of data
       for (int i = 0; i < fieldsTexts.length; i++)
+        // i + 1 to compensate for that fact that the first field is the icon.
         ((Label) fields.get(i + 1)).setText(fieldsTexts[i]);
 
       curDay++;

@@ -21,8 +21,6 @@ public class StateInfo {
   public Label goalText = null;
 
   public static final double maxX = (1600 * 0.75); // Game scene takes 75% of the stage
-  public static final double paddleWidth = 150;
-  public static final double paddleHeight = 50;
   public static final Vec2 middle = new Vec2(1600*0.75 / 2, 900 / 2);
   public static final Vec2 paddleSize = new Vec2(150, 25);
 

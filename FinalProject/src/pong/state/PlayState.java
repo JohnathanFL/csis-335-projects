@@ -11,10 +11,10 @@ public class PlayState implements State {
     Vec2 pos = new Vec2(paddle);
     if (dir == Controller.Dir.Right) {
 
-      if (pos.x < (state.maxX - state.paddleWidth))
+      if (pos.x < (state.maxX - state.paddleSize.x))
         pos.x += 2 * state.speedMult;
       else
-        pos.x = state.maxX - state.paddleWidth;
+        pos.x = state.maxX - state.paddleSize.x;
     } else if (dir == Controller.Dir.Left) {
       if (pos.x > 0)
         pos.x -= 2 * state.speedMult;

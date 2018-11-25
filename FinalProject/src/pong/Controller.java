@@ -84,12 +84,35 @@ public class Controller {
     //System.out.printf("Paddle1: %b, %b\nPaddle2: %b, %b\n\n", controlStates[0][0], controlStates[0][1], controlStates[1][0], controlStates[1][1]);
   }
 
+  public void draw() {
+    GraphicsContext ctx = gfx.getGraphicsContext2D();
+
+    StateInfo info = State.state;
+
+    Vec2 p1Pos = new Vec2(paddle1), p2Pos = new Vec2(paddle2);
+
+    System.out.println("Drawing to " + p1Pos);
+
+
+    ctx.setLineWidth(5);
+
+    ctx.setFill(Color.BLUE);
+
+    ctx.clearRect(0,0, 1200, 900);
+
+    ctx.fillRect(p1Pos.x, p1Pos.y, info.paddleSize.x, info.paddleSize.y);
+
+    ctx.setFill(Color.RED);
+    ctx.fillRect(p2Pos.x, p2Pos.y, info.paddleSize.x, info.paddleSize.y);
+  }
+
   public void initialize() {
 
     State.state.init(controls, pong, paddle1, paddle2, topGoal, bottomGoal, p1ScoreLbl, p2ScoreLbl, goalText);
     State.state.stateStack.push(new PlayState());
     StateInfo info = State.state;
 
+    // If these aren't pre-initialized, we'll get nullptr exceptions galore.
     String[] usedMappings = {"P1Left", "P2Left", "P1Right", "P2Right", "Pause"};
     for(String str : usedMappings)
       controls.put(str, false);
@@ -105,6 +128,8 @@ public class Controller {
 
                               State curState = info.stateStack.getFirst();
                               curState.handle();
+
+                              draw();
                             }
                     )
             )

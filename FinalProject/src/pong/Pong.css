@@ -1,5 +1,28 @@
+ @font-face {
+    font-family: 'Joystix Monospace';
+    src: url('joystixmonospace.ttf');
+}
+
 AnchorPane {
     -fx-border-color: purple;
+}
+
+Button {
+    -fx-font-family: 'Joystix Monospace';
+    -fx-font-size: 1.2em;
+    -fx-text-fill: green;
+    -fx-border-color: white;
+    -fx-border-width: 0.4em;
+    -fx-background-color: black;
+}
+
+HBox {
+    -fx-border-color: white;
+    -fx-border-width: 0.4em;
+}
+
+GridPane {
+    -fx-background-color: black;
 }
 
 GridPane VBox {
@@ -10,4 +33,18 @@ GridPane VBox {
 VBox > GridPane {
     -fx-grid-line-color: purple;
     -fx-border-width: 5px;
+}
+
+Label {
+    -fx-text-fill: green;
+    -fx-font-size: 1em;
+    -fx-font-family: 'Joystix Monospace';
+}
+
+AnchorPane > Label {
+    -fx-font-size: 3em;
+}
+
+AnchorPane Label {
+
 }
