@@ -10,6 +10,11 @@ public class PlayState implements State {
 
   public FlowControl handle() {
 
+    if(state.roundNum == 3) {
+      state.stateStack.push(new WonGameState());
+      return FlowControl.Continue;
+    }
+
 
     if (state.controls.get("P1Left"))
       movePaddle(state.paddle1Pos, Controller.Dir.Left);

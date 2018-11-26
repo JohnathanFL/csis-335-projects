@@ -28,9 +28,11 @@ public class StateInfo {
           paddle1Pos,
           paddle2Pos;
   public double speedMult = 5.0;
-  public int roundNum = 1;
+  public int roundNum = 0;
   public int p1Score = 0, p2Score = 0;
   Map<String, Boolean> controls;
+
+  public int p1ID, p2ID;
 
   public StateInfo() {
     stateStack = new ArrayDeque<>();

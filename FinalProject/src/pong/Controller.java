@@ -19,12 +19,37 @@ import pong.state.PlayState;
 import pong.state.State;
 import pong.state.StateInfo;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Controller {
+  public static Connection conn;
+  public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName;
+
+  public static boolean call(PreparedStatement stmt, Object ... obj) {
+    int i = 1;
+    for(Object o : obj)
+      try {
+        stmt.setObject(i++, o);
+      } catch (SQLException e) {
+        System.out.println(e);
+      }
+
+      try {
+        return stmt.execute();
+      } catch (SQLException e) {
+        System.out.println(e);
+        return false;
+      }
+  }
+
+
   public AnchorPane gameScene;
   public Label p1ScoreLbl;
   public Label p2ScoreLbl;
@@ -117,6 +142,15 @@ public class Controller {
   }
 
   public void initialize() {
+    try {
+      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_pong", "leejo", "OverlyUnderlyPoweredMS");
+      addGameWon = conn.prepareStatement("insert into Played (p1ID, p2ID, p1Score, p2Score, winner) values (?, ?, ?, ?, ?);");
+      addUser = conn.prepareStatement("insert into User (displayName, email, passwd, genSet, bgSet) values (?, ?, ?, ?, ?);");
+      getUserDetails = conn.prepareStatement("select * from User where User.id = ?;");
+      getIdFromName = conn.prepareStatement("select id from User where User.displayName like ?;");
+    } catch (SQLException e) {
+      System.out.println(e);
+    }
 
     State.state.init(controls, p1ScoreLbl, p2ScoreLbl, goalText);
     State.state.stateStack.push(new PlayState());
@@ -142,7 +176,7 @@ public class Controller {
 
                               draw();
 
-                              System.out.println(info.stateStack);
+                              //System.out.println(info.stateStack);
                             }
                     )
             )

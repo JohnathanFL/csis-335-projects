@@ -13,6 +13,7 @@ class WonRoundState implements State {
     //System.out.println("Handling win");
     if(state.pongAngle > 1.0) {
       state.goalText.setVisible(true);
+      state.goalText.setText("GOAAAAAAAAAAAAAL!");
       state.pongAngle = state.pongAngle - state.pongAngle * 0.1667 / 10;
 
       return FlowControl.Continue;
@@ -29,6 +30,8 @@ class WonRoundState implements State {
 
       state.resetPos();
       state.pongAngle = 360;
+
+      state.roundNum++;
 
 
 
