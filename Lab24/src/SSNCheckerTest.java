@@ -3,6 +3,7 @@ import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runners.Parameterized;
 
+import javax.lang.model.util.ElementScanner6;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,24 +11,30 @@ import java.util.Map;
 
 public class SSNCheckerTest extends TestCase {
 
-  @Parameterized.Parameter(0)
-  public Object ssn;
-  @Parameterized.Parameter(1)
-  public Object expected;
+  public String ssn;
+  public String expected;
+
+  public SSNCheckerTest(String ssn, String expected) {
+    this.ssn = ssn;
+    this.expected = expected;
+  }
+
   private Main main = new Main();
 
-  @Parameterized.Parameters
-  public static Map<String, Boolean> params() {
+  private static final String FALSE = "FALSE", TRUE = "TRUE";
 
-        {"00-000-0000", false},
-        {"11-124-1244",true},
-        {"sfsdjhskjdf", false}
-    });
+  @Parameterized.Parameters
+  public static Iterable<String[]> params() {
+      return Arrays.asList(new String[][]{
+          {"00-000-0000", FALSE},
+          {"11-124-1244", TRUE},
+          {"sfsdjhskjdf", FALSE}});
   }
 
 
   @Test
   public void testIsValidSSN() {
+    System.out.println(expected);
     System.out.println("Input: " + ssn + " Expected: " + expected + " Got: " + main.isValidSSN((String)ssn));
     assertEquals(expected, main.isValidSSN((String)ssn));
   }

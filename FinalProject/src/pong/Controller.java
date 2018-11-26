@@ -3,34 +3,26 @@ package pong;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
-import pong.state.FlowControl;
-import pong.state.PlayState;
-import pong.state.State;
-import pong.state.StateInfo;
+import pong.state.*;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayDeque;
-import java.util.Deque;
+import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Controller {
   public static Connection conn;
-  public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName;
+  public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName, tryLogin;
 
   public static boolean call(PreparedStatement stmt, Object ... obj) {
     int i = 1;
@@ -49,11 +41,29 @@ public class Controller {
       }
   }
 
+  public static ResultSet query(PreparedStatement stmt, Object ... obj) {
+    int i = 1;
+    for(Object o : obj)
+      try {
+        stmt.setObject(i++, o);
+      } catch (SQLException e) {
+        System.out.println(e);
+      }
+
+    try {
+      return stmt.executeQuery();
+    } catch (SQLException e) {
+      System.out.println(e);
+      return null;
+    }
+  }
+
 
   public AnchorPane gameScene;
   public Label p1ScoreLbl;
   public Label p2ScoreLbl;
   public Label goalText;
+  public Button p1Login, p2Login;
   public Canvas gfx;
 
   boolean p2IsBot = false;
@@ -141,19 +151,65 @@ public class Controller {
     drawPong(info.pongPos, 360, Color.PURPLE);
   }
 
+  public void createUser() {
+    
+  }
+
+  public boolean login(int player) {
+    TextInputDialog dia = new TextInputDialog();
+
+    TextField userField = new TextField();
+    PasswordField passField = new PasswordField();
+
+    userField.setPromptText("username");
+    passField.setPromptText("password");
+
+    HBox cont = new HBox(userField, passField);
+
+    dia.getDialogPane().setContent(cont);
+
+    Button btn = (Button)dia.getDialogPane().lookupButton(ButtonType.OK);
+
+    boolean[] ret = {false}; // Evil hackery to return from a lambda
+    btn.setOnAction(e -> {
+      ResultSet res = query(tryLogin, userField.getText(), passField.getText().hashCode());
+
+      try {
+        if (res.next()) {
+          int id = res.getInt("id");
+          if(player == 1)
+            State.state.p1ID = id;
+          else
+            State.state.p2ID = id;
+
+          ret[0] = true;
+        } else
+          ret[0] = false;
+
+      } catch (SQLException ex) {
+        System.out.println(ex);
+      }
+    });
+
+    dia.showAndWait();
+
+    return ret[0];
+  }
+
   public void initialize() {
     try {
-      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_pong", "leejo", "OverlyUnderlyPoweredMS");
+      conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_pong?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
       addGameWon = conn.prepareStatement("insert into Played (p1ID, p2ID, p1Score, p2Score, winner) values (?, ?, ?, ?, ?);");
       addUser = conn.prepareStatement("insert into User (displayName, email, passwd, genSet, bgSet) values (?, ?, ?, ?, ?);");
       getUserDetails = conn.prepareStatement("select * from User where User.id = ?;");
       getIdFromName = conn.prepareStatement("select id from User where User.displayName like ?;");
+      tryLogin = conn.prepareStatement("select id from User where User.displayName like ? and User.passwd like ?;");
     } catch (SQLException e) {
       System.out.println(e);
     }
 
     State.state.init(controls, p1ScoreLbl, p2ScoreLbl, goalText);
-    State.state.stateStack.push(new PlayState());
+    State.state.stateStack.push(new PlayState()); // Do nothing until a login
     StateInfo info = State.state;
 
     // If these aren't pre-initialized, we'll get nullptr exceptions galore.
@@ -184,6 +240,11 @@ public class Controller {
             .build();
 
     tick.play();
+
+    p1Login.setOnAction(e -> {
+      System.out.println(login(1));
+    });
+
 
   }
 

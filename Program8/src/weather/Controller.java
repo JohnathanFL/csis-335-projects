@@ -1,3 +1,11 @@
+/**
+ * Author: Johnathan Lee
+ * CSIS 335
+ *
+ * Program 8 Due 11/26/18
+ * Displays a simple 5 day forecast from the OpenWeathermap.org API
+ */
+
 package weather;
 
 import javafx.beans.property.BooleanProperty;
@@ -31,6 +39,11 @@ public class Controller {
   public Button updateBtn;
   public VBox weatherBox;
 
+  /**
+   * Parses data from a web API into a JSONObject
+   * @param url The URL to grab from
+   * @return A JSONObject if parse was successful, null otherwise.
+   */
   private JSONObject getData(String url) {
     try {
       HttpURLConnection con = (HttpURLConnection) (new URL(url)).openConnection();
@@ -48,6 +61,9 @@ public class Controller {
     }
   }
 
+  /**
+   * Refreshes all displayed data, pulling from the API using the textfields for parameters
+   */
   public void refresh() {
 
     JSONObject data = getData("http://api.openweathermap.org/data/2.5/forecast?q=" + cityField.getText() + "," + countryField + "&appid=4d45ebfb65ad3710630352dc678c9091");
@@ -80,7 +96,9 @@ public class Controller {
           /*Windspeed*/ String.format("Windspeed: %.00f m/s", ((Number)wind.get("speed")).doubleValue())
       };
 
-      Image iconImg = new Image(getClass().getResource(((String) weath.get("icon")).replace('n', 'd') + ".png").toExternalForm());
+      String url = "http://openweathermap.org/img/w/" + weath.get("icon").toString().replace('n', 'd') + ".png";
+      System.out.println(url);
+      Image iconImg = new Image(url);
 
       ObservableList<Node> fields = grid.getChildren();
       ImageView icon = (ImageView) fields.get(0);
@@ -95,6 +113,10 @@ public class Controller {
     }
   }
 
+  /**
+   * Checks whether both text fields have something in them and updates the provided property accordingly
+   * @param isDisabled Property to update. True if invalid textfields, false if valid
+   */
   public void updateDisable(BooleanProperty isDisabled) {
     if(cityField.getText().isEmpty() || countryField.getText().isEmpty())
       isDisabled.set(true);

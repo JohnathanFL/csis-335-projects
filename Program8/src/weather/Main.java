@@ -1,3 +1,11 @@
+/**
+ * Author: Johnathan Lee
+ * CSIS 335
+ *
+ * Program 8 Due 11/26/18
+ * Displays a simple 5 day forecast from the OpenWeathermap.org API
+ */
+
 package weather;
 
 import javafx.application.Application;
@@ -12,7 +20,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("MainScene.fxml"));
         primaryStage.setTitle("Weather Info");
-        primaryStage.setScene(new Scene(root, 1600, 750));
+        primaryStage.setScene(new Scene(root, 1700, 750));
         primaryStage.show();
     }
 

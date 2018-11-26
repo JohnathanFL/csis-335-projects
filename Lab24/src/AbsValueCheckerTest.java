@@ -12,6 +12,8 @@ public class AbsValueCheckerTest extends TestCase {
   public int inputNum;
   @Parameterized.Parameter(1)
   public int expected;
+
+
   private Main main = new Main();
 
   @Parameterized.Parameters
