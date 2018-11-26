@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Arc?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
@@ -27,18 +26,13 @@
    <children>
       <AnchorPane fx:id="gameScene" maxHeight="900.0" maxWidth="1200.0" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
          <children>
-            <Canvas fx:id="gfx" height="900.0" width="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
             <Rectangle arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="5.0" layoutX="501.0" layoutY="324.0" stroke="BLACK" strokeType="INSIDE" width="1200.0" AnchorPane.bottomAnchor="450.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="450.0" />
-            <Rectangle fx:id="paddle1" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="50.0" layoutX="72.0" layoutY="209.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="150.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="550.0" />
-            <Rectangle fx:id="paddle2" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="50.0" layoutX="125.0" layoutY="-50.0" stroke="BLACK" strokeType="INSIDE" visible="false" width="150.0" AnchorPane.bottomAnchor="800.0" AnchorPane.leftAnchor="550.0" />
-            <Arc fx:id="pong" fill="#b01fff" layoutX="590.0" layoutY="425.0" length="360.0" radiusX="25.0" radiusY="25.0" stroke="BLACK" strokeType="INSIDE" type="ROUND" AnchorPane.bottomAnchor="450.0" AnchorPane.leftAnchor="564.9985370635986" />
-            <Rectangle fx:id="topGoal" arcHeight="5.0" arcWidth="5.0" fill="DODGERBLUE" height="15.0" layoutX="26.0" layoutY="115.0" stroke="BLACK" strokeType="INSIDE" width="1200.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-            <Rectangle fx:id="bottomGoal" arcHeight="5.0" arcWidth="5.0" fill="#ff1f1f" height="15.0" layoutX="36.0" layoutY="125.0" stroke="BLACK" strokeType="INSIDE" width="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
             <Label fx:id="goalText" alignment="CENTER" contentDisplay="CENTER" layoutX="583.0" layoutY="253.0" text="GOOOOOOOOAAAAAAAL" visible="false" AnchorPane.leftAnchor="330.0">
                <font>
                   <Font size="41.0" />
                </font>
             </Label>
+            <Canvas fx:id="gfx" height="900.0" width="1200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
       <VBox prefHeight="200.0" prefWidth="100.0">

@@ -1,6 +1,6 @@
 package pong.state;
 
-enum FlowControl {
+public enum FlowControl {
   Continue,
   LeaveState
 }

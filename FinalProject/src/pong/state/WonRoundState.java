@@ -11,14 +11,13 @@ class WonRoundState implements State {
 
   public FlowControl handle() {
     //System.out.println("Handling win");
-    if(state.pong.getLength() > 1.0) {
+    if(state.pongAngle > 1.0) {
       state.goalText.setVisible(true);
-      state.pong.setLength(state.pong.getLength() - state.pong.getLength() * 0.1667 / 10);
+      state.pongAngle = state.pongAngle - state.pongAngle * 0.1667 / 10;
 
+      return FlowControl.Continue;
     } else {
       state.goalText.setVisible(false);
-
-      state.stateStack.pop(); // Done with the win anim
 
       if(winner == 1)
         state.p1Score++;
@@ -28,17 +27,14 @@ class WonRoundState implements State {
       state.p1ScoreLbl.setText(Integer.toString(state.p1Score));
       state.p2ScoreLbl.setText(Integer.toString(state.p2Score));
 
-      state.pong.setLength(360);
-      state.middle.setConstraints(state.pong);
-      // -0.5 brings it into negative, *2.0 brings it back to a full [-1, 1] range
-      state.pongVeloc = new Vec2((Math.random() - 0.5) * 2.0, (Math.random() - 0.5) * 2.0);
-      state.pongVeloc.normalize();
-      state.pongVeloc.mult(2.0);
-      if(state.pongVeloc.length() >= 8.0)
-        state.pongVeloc.mult(1/2.0);
-    }
+      state.resetPos();
+      state.pongAngle = 360;
 
-    return FlowControl.Continue;
+
+
+
+      return FlowControl.LeaveState;
+    }
   }
 
   public void enter() {

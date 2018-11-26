@@ -9,9 +9,12 @@ import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
+import pong.state.FlowControl;
 import pong.state.PlayState;
 import pong.state.State;
 import pong.state.StateInfo;
@@ -23,20 +26,19 @@ import java.util.Map;
 
 public class Controller {
   public AnchorPane gameScene;
-  public Arc pong;
-  public Rectangle paddle1, paddle2;
-  public Rectangle topGoal, bottomGoal;
   public Label p1ScoreLbl;
   public Label p2ScoreLbl;
   public Label goalText;
   public Canvas gfx;
 
-  boolean p2IsBot = true;
+  boolean p2IsBot = false;
 
   //Deque<State> stateStack = new ArrayDeque<>();
 
   // {paddle1: {leftCtrl, rightCtrl}, paddle2: ..., pauseBtn
-  public Map<String, Boolean> controls = new HashMap<>();
+  public Map<String, Boolean> controls = new HashMap<>(),
+  // gives us simple "just pressed" style capabilities
+        lastControls = new HashMap<>();
 
 
   Integer handleAIInterval = 0;
@@ -45,10 +47,6 @@ public class Controller {
     gameScene.getScene().setOnKeyReleased(key -> setKeyStatesTo(false, key.getCode()));
     gameScene.getScene().setOnKeyPressed(key -> {
       setKeyStatesTo(true, key.getCode());
-
-      if (key.getCode() == KeyCode.ESCAPE) {
-        controls.put("Pause", true);
-      }
     });
   }
 
@@ -79,36 +77,48 @@ public class Controller {
         return;
     }
 
+    lastControls.put(which, controls.get(which));
     controls.put(which, bool);
 
-    //System.out.printf("Paddle1: %b, %b\nPaddle2: %b, %b\n\n", controlStates[0][0], controlStates[0][1], controlStates[1][0], controlStates[1][1]);
+    //System.out.println(this.controls);
+  }
+
+  public void drawPaddle(Vec2 pos, Paint color) {
+    GraphicsContext ctx = gfx.getGraphicsContext2D();
+    ctx.setLineWidth(5);
+
+    ctx.setFill(color);
+
+    ctx.fillRect(pos.x, pos.y, StateInfo.paddleSize.x, StateInfo.paddleSize.y);
+  }
+
+  public void drawPong(Vec2 pos, double angle, Paint color) {
+    GraphicsContext ctx = gfx.getGraphicsContext2D();
+
+    ctx.setLineWidth(5);
+    ctx.setFill(color);
+    ctx.setStroke(color);
+
+    ctx.fillArc(pos.x, pos.y, StateInfo.pongSize.x, StateInfo.pongSize.y, 0, angle, ArcType.ROUND);
   }
 
   public void draw() {
     GraphicsContext ctx = gfx.getGraphicsContext2D();
+    ctx.clearRect(0,0, StateInfo.extents.x, StateInfo.extents.y);
 
     StateInfo info = State.state;
 
-    Vec2 p1Pos = new Vec2(paddle1), p2Pos = new Vec2(paddle2);
+    //System.out.println("Drawing to " + p1Pos);
 
-    System.out.println("Drawing to " + p1Pos);
+    drawPaddle(info.paddle1Pos, Color.BLUE);
+    drawPaddle(info.paddle2Pos, Color.RED);
 
-
-    ctx.setLineWidth(5);
-
-    ctx.setFill(Color.BLUE);
-
-    ctx.clearRect(0,0, 1200, 900);
-
-    ctx.fillRect(p1Pos.x, p1Pos.y, info.paddleSize.x, info.paddleSize.y);
-
-    ctx.setFill(Color.RED);
-    ctx.fillRect(p2Pos.x, p2Pos.y, info.paddleSize.x, info.paddleSize.y);
+    drawPong(info.pongPos, 360, Color.PURPLE);
   }
 
   public void initialize() {
 
-    State.state.init(controls, pong, paddle1, paddle2, topGoal, bottomGoal, p1ScoreLbl, p2ScoreLbl, goalText);
+    State.state.init(controls, p1ScoreLbl, p2ScoreLbl, goalText);
     State.state.stateStack.push(new PlayState());
     StateInfo info = State.state;
 
@@ -127,9 +137,12 @@ public class Controller {
                                 handleAI();
 
                               State curState = info.stateStack.getFirst();
-                              curState.handle();
+                              if(curState.handle() == FlowControl.LeaveState)
+                                info.stateStack.pop();
 
                               draw();
+
+                              System.out.println(info.stateStack);
                             }
                     )
             )
@@ -147,9 +160,9 @@ public class Controller {
     else
       handleAIInterval = 0;
 
-    Vec2 paddlePos = new Vec2(paddle2), pongPos = new Vec2(pong);
+    StateInfo state = State.state;
 
-    if (pongPos.x < paddlePos.x) {
+    if (state.pongPos.x < state.paddle2Pos.x) {
       controls.put("P2Left", true);
       controls.put("P2Right", false);
     } else {
