@@ -21,7 +21,10 @@ class WonGameState implements State {
 
       PreparedStatement inserter = Controller.addGameWon;
 
-      Controller.call(inserter, state.p1ID, state.p2ID, state.p1Score, state.p2Score, winner);
+      // Record the game
+      Controller.call(inserter, state.p1.id, state.p2.id, state.p1Score, state.p2Score, winner);
+
+      // Reset everything
 
       state.roundNum = 0;
       state.p1Score = 0;
@@ -43,4 +46,5 @@ class WonGameState implements State {
   public void enter() {
 
   }
+  public void leave() {}
 }

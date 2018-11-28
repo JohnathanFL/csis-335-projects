@@ -4,15 +4,16 @@
 }
 
 AnchorPane {
-    -fx-border-color: purple;
+    -fx-border-width: 0 0 0 1em;
+    -fx-border-color: #FF00FF;
 }
 
 Button {
     -fx-font-family: 'Joystix Monospace';
     -fx-font-size: 1.2em;
-    -fx-text-fill: green;
-    -fx-border-color: white;
-    -fx-border-width: 0.4em;
+    -fx-text-fill: #00ff00;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 0.1em;
     -fx-background-color: black;
 }
 
@@ -25,20 +26,20 @@ GridPane {
     -fx-background-color: black;
 }
 
-GridPane VBox {
-    -fx-border-color: purple;
-    -fx-border-width: 10px;
-    -fx-background-color: white;
-}
 VBox > GridPane {
-    -fx-grid-line-color: purple;
+
     -fx-border-width: 5px;
 }
 
 Label {
-    -fx-text-fill: green;
-    -fx-font-size: 1em;
+    -fx-text-fill: #00ff00;
+    -fx-font-size: 1.2em;
     -fx-font-family: 'Joystix Monospace';
+}
+
+ImageView {
+    -fx-border-color: grey;
+    -fx-border-width: 0.1em;
 }
 
 AnchorPane > Label {
@@ -47,4 +48,17 @@ AnchorPane > Label {
 
 AnchorPane Label {
 
+}
+
+TableView {
+    -fx-background-color: black;
+}
+
+TableView .column-header {
+    -fx-background-color: black;
+    -fx-border-color: black;
+}
+
+TableView .column-header .label {
+    -fx-font-size: 2em;
 }

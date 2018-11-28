@@ -2,10 +2,11 @@ package pong.state;
 
 
 public interface State {
-  StateInfo state = new StateInfo();
+  GameVars state = new GameVars();
 
   FlowControl handle();
   void enter(); // Perform all setup for this state
+  void leave(); //  Perform all cleanup for this state.
 }
 
 

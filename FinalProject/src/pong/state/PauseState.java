@@ -1,6 +1,6 @@
 package pong.state;
 
-class PauseState implements State {
+public class PauseState implements State {
   public FlowControl handle() {
     if(state.controls.get("Pause"))
       return FlowControl.LeaveState;
@@ -9,6 +9,10 @@ class PauseState implements State {
   }
 
   public void enter() {
+
+  }
+
+  public void leave() {
 
   }
 }

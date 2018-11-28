@@ -43,4 +43,6 @@ class WonRoundState implements State {
   public void enter() {
 
   }
+
+  public void leave() {}
 }

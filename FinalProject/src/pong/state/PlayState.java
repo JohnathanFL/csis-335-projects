@@ -2,7 +2,6 @@ package pong.state;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.scene.shape.Rectangle;
 import pong.Controller;
 import pong.Vec2;
 
@@ -29,22 +28,22 @@ public class PlayState implements State {
 
     //System.out.println("From " + pongPos);
 
-    final Bounds arenaBounds = new BoundingBox(0, 0, StateInfo.extents.x, StateInfo.extents.y);
+    final Bounds arenaBounds = new BoundingBox(0, 0, GameVars.extents.x, GameVars.extents.y);
 
-    Bounds p1Bounds = new BoundingBox(state.paddle1Pos.x, state.paddle1Pos.y, StateInfo.paddleSize.x,
-            StateInfo.paddleSize.y),
-            p2Bounds = new BoundingBox(state.paddle2Pos.x, state.paddle2Pos.y, StateInfo.paddleSize.x,
-                    StateInfo.paddleSize.y),
-            pongBounds = new BoundingBox(state.pongPos.x, state.pongPos.y, StateInfo.pongSize.x,
-                    StateInfo.pongSize.y);
+    Bounds p1Bounds = new BoundingBox(state.paddle1Pos.x, state.paddle1Pos.y, GameVars.paddleSize.x,
+            GameVars.paddleSize.y),
+            p2Bounds = new BoundingBox(state.paddle2Pos.x, state.paddle2Pos.y, GameVars.paddleSize.x,
+                    GameVars.paddleSize.y),
+            pongBounds = new BoundingBox(state.pongPos.x, state.pongPos.y, GameVars.pongSize.x,
+                    GameVars.pongSize.y);
 
-    if(!arenaBounds.contains(StateInfo.middle.x, state.pongPos.y))
+    if(!arenaBounds.contains(GameVars.middle.x, state.pongPos.y))
       state.stateStack.push(new WonRoundState(1));
-    else if(!arenaBounds.contains(StateInfo.middle.x,state.pongPos.y + StateInfo.pongSize.y))
+    else if(!arenaBounds.contains(GameVars.middle.x,state.pongPos.y + GameVars.pongSize.y))
       state.stateStack.push(new WonRoundState(2));
 
 
-    if(!arenaBounds.contains(state.pongPos.x - 1.0, StateInfo.middle.y) || !arenaBounds.contains((state.pongPos.x + StateInfo.pongSize.x + 1.0), StateInfo.middle.y))
+    if(!arenaBounds.contains(state.pongPos.x - 1.0, GameVars.middle.y) || !arenaBounds.contains((state.pongPos.x + GameVars.pongSize.x + 1.0), GameVars.middle.y))
       state.pongVeloc.x *= -1;
 
     if (pongBounds.intersects(p1Bounds) || pongBounds.intersects(p2Bounds)) {
@@ -69,13 +68,17 @@ public class PlayState implements State {
 
     if (pos.x <= 1)
       pos.x = 1.01;
-    else if (pos.x >= (state.extents.x - state.paddleSize.x))
-      pos.x = state.extents.x - state.paddleSize.x;
+    else if (pos.x >= (GameVars.extents.x - GameVars.paddleSize.x))
+      pos.x = GameVars.extents.x - GameVars.paddleSize.x;
 
     //System.out.println("Moved a paddle to " + pos + "(" + dir + ")");
   }
 
   public void enter() {
+
+  }
+
+  public void leave() {
 
   }
 
