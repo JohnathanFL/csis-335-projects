@@ -7,9 +7,14 @@ public class DormantState implements State {
   public void enter(){
     state.goalText.setText("READY PLAYER 1");
     state.goalText.setVisible(true);
-  }// Perform all setup for this state
+
+    state.p1Score = state.p2Score = 0;
+    state.p1ScoreLbl.setText(""+state.p1Score);
+    state.p2ScoreLbl.setText(""+state.p2Score);
+  }
 
   public void leave(){
     state.goalText.setVisible(false);
+
   }
 }

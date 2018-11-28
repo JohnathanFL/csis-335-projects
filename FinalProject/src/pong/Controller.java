@@ -196,6 +196,8 @@ public class Controller {
   public void createUser() {
     System.out.println("Creating user...");
     TextInputDialog dia = new TextInputDialog();
+    dia.getDialogPane().getStylesheets().add(getClass().getResource("Pong.css").toExternalForm());
+
 
     TextField nameField = new TextField(), emailField = new TextField(), passwdField = new PasswordField();
     ComboBox<IconSet> iconCombo = new ComboBox<>(FXCollections.observableArrayList(IconSet.Standard, IconSet.Monster, IconSet.Suave, IconSet.Kitten));
@@ -265,7 +267,7 @@ public class Controller {
   public void toggleLogin(int player) {
     if (player == 1 && State.state.p1 != null) {
       logout(player);
-      State.state.stateStack.push(new PlayState());
+      State.state.stateStack.push(new DormantState());
     } else if (player == 2 && State.state.p2 != GameVars.botUser) {
       logout(player);
     } else {
@@ -283,6 +285,9 @@ public class Controller {
       stateStack.push(new PauseState());
 
     TextInputDialog dia = new TextInputDialog();
+    dia.getDialogPane().getStylesheets().add(getClass().getResource("Pong.css").toExternalForm());
+    dia.setGraphic(null);
+    dia.setHeaderText("LOGIN");
 
     TextField userField = new TextField(), passField = new PasswordField();
     Label userLbl = new Label("Username: "), passLbl = new Label("Password: ");

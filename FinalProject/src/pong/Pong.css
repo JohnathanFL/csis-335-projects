@@ -62,3 +62,7 @@ TableView .column-header {
 TableView .column-header .label {
     -fx-font-size: 2em;
 }
+
+.dialog-pane .button-bar .container {
+  -fx-background-color:black;
+}
