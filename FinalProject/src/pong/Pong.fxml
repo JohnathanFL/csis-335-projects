@@ -30,9 +30,9 @@
          <children>
             <TableView fx:id="statTable" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                <TableColumn prefWidth="45.33332443237305" text="#" />
-                <TableColumn prefWidth="753.666675567627" text="USER" />
-                  <TableColumn prefWidth="75.0" text="SCORE" />
+                <TableColumn fx:id="statIdCol" prefWidth="45.33332443237305" text="#" />
+                <TableColumn fx:id="statUserCol" prefWidth="753.666675567627" text="USER" />
+                  <TableColumn fx:id="statScoreCol" prefWidth="75.0" text="SCORE" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -97,7 +97,7 @@
                         <Insets left="20.0" top="5.0" />
                      </GridPane.margin>
                   </ImageView>
-                  <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="PLAYER 1" textFill="#072dfa" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                  <Label fx:id="p1NameLbl" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="PLAYER 1" textFill="#072dfa" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                   <ImageView fitHeight="175.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                      <image>
                         <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
@@ -109,7 +109,7 @@
                         <Insets right="20.0" top="5.0" />
                      </GridPane.margin>
                   </ImageView>
-                  <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="PLAYER 2" textFill="RED" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" />
+                  <Label fx:id="p2NameLbl" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="PLAYER 2" textFill="RED" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1" />
                   <Button fx:id="viewLeaderboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="LEADERBOARD" GridPane.columnSpan="4" GridPane.hgrow="ALWAYS" GridPane.rowIndex="5" GridPane.vgrow="ALWAYS" />
                </children>
             </GridPane>

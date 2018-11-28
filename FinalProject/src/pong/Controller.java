@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -26,6 +27,11 @@ import java.util.*;
 public class Controller {
   public static Connection conn;
   public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName, tryLogin, getAllPlayed;
+  public Label p1NameLbl;
+  public Label p2NameLbl;
+  public TableColumn statIdCol;
+  public TableColumn statUserCol;
+  public TableColumn statScoreCol;
 
   public static boolean call(PreparedStatement stmt, Object... obj) {
 
@@ -92,31 +98,7 @@ public class Controller {
 
   public void setKeyStatesTo(boolean bool, KeyCode key) {
     String which;
-    switch (key) {
-      case LEFT:
-        which = "P1Left";
-        break;
-
-      case RIGHT:
-        which = "P1Right";
-        break;
-
-      case A:
-        which = "P2Left";
-        break;
-
-      case D:
-        which = "P2Right";
-        break;
-
-      case ESCAPE:
-        which = "Pause";
-        break;
-
-      default:
-        return;
-    }
-
+    which = mappings.get(key);
     lastControls.put(which, controls.get(which));
     controls.put(which, bool);
 
@@ -254,14 +236,17 @@ public class Controller {
     dia.show();
   }
 
-  Map<Integer, User> users = new TreeMap<>();
-  ObservableList<Played> played = FXCollections.observableArrayList();
-
   public void logout(int player) {
-    if (player == 1)
+    if (player == 1) {
       State.state.p1 = null;
-    else if (player == 2)
+      p1Login.setText(loginText);
+      p1NameLbl.setText("PLAYER 1");
+    }
+    else if (player == 2) {
       State.state.p2 = GameVars.botUser;
+      p2Login.setText(loginText);
+      p1NameLbl.setText("PLAYER 2");
+    }
   }
 
   public void toggleLogin(int player) {
@@ -342,8 +327,18 @@ public class Controller {
 
     dia.showAndWait();
 
-    if (ret[0])
+    if (ret[0]) {
       stateStack.push(new PlayState());
+      if(player == 1) {
+        p1Login.setText(logoutText);
+        p1NameLbl.setText(State.state.p1.name);
+      }
+
+      else {
+        p2Login.setText(logoutText);
+        p2NameLbl.setText(State.state.p2.name);
+      }
+    }
 
     return ret[0];
   }
@@ -351,11 +346,14 @@ public class Controller {
   State prevState = null;
 
   public void refresh() {
-    ResultSet allPlayed = query(getAllPlayed);
-    played.clear();
     try {
+      ResultSet allPlayed = query(getAllPlayed);
+      ObservableList<Played> played = FXCollections.observableArrayList();
       while (allPlayed.next())
         played.add(new Played(allPlayed));
+
+
+      statTable.setItems(played);
     } catch (SQLException e) {
       System.out.println(e);
     }
@@ -366,16 +364,29 @@ public class Controller {
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_pong?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
       addGameWon = conn.prepareStatement("insert into Played (p1ID, p2ID, p1Score, p2Score, winner) values (?, ?, ?, ?, ?);");
-      addUser = conn.prepareStatement("insert into User (displayName, email, passwd, genSet, bgSet) values (?, ?, ?, ?, ?);");
+      addUser = conn.prepareStatement("insert into User (displayName, email, passwd, genSet, bgSet) values (lcase(?), lcase(?), ?, ?, ?);");
       getUserDetails = conn.prepareStatement("select id, displayName, email, genSet, bgSet from User where User.id = ?;");
-      getIdFromName = conn.prepareStatement("select id from User where User.displayName like ?;");
-      tryLogin = conn.prepareStatement("select id from User where User.displayName like ? and User.passwd like ?;");
+      getIdFromName = conn.prepareStatement("select id from User where User.displayName like lcase(?);");
+      tryLogin = conn.prepareStatement("select id from User where User.displayName like lcase(?) and User.passwd like ?;");
       getAllPlayed = conn.prepareStatement("select * from Played;");
     } catch (SQLException e) {
       System.out.println(e);
     }
 
     refresh();
+
+    Object[][] newMappings = {
+        {KeyCode.A, "P2Left"},
+        {KeyCode.D, "P2Right"},
+        {KeyCode.RIGHT, "P1Right"},
+        {KeyCode.LEFT, "P1Left"}
+    };
+
+    mappings = new TreeMap<>();
+    for(Object[] ar : newMappings)
+      mappings.put((KeyCode)ar[0], (String)ar[1]);
+
+    p2NameLbl.setText(State.state.p2.name);
 
     State.state.init(controls, p1ScoreLbl, p2ScoreLbl, goalText);
     State.state.stateStack.push(new DormantState()); // Do nothing until a toggleLogin
@@ -391,7 +402,7 @@ public class Controller {
         .create()
         .keyFrames(
             new KeyFrame(
-                new Duration(16.667), // 60 FPS
+                new Duration(16.667), // 60 FPS = 16.67ms/frame
                 ev -> {
                   if (State.state.p2 == GameVars.botUser)
                     handleAI();
@@ -419,6 +430,8 @@ public class Controller {
 
     tick.play();
 
+    p1Login.setText(loginText);
+    p2Login.setText(loginText);
     p1Login.setOnAction(e -> {
       toggleLogin(1);
     });
@@ -432,18 +445,19 @@ public class Controller {
 
     System.out.println("Done initializing");
   }
-
+  static final String loginText = "Log in", logoutText = "Logout";
 
   private void handleAI() {
-    // Only handle every 100 ticks
-    if (handleAIInterval++ < 10)
+    // Only handle every x ticks
+    if (handleAIInterval++ < 7)
       return;
     else
       handleAIInterval = 0;
 
     GameVars state = State.state;
 
-    if (state.pongPos.x < state.paddle2Pos.x) {
+    // Only going off of the middle of each
+    if ((state.pongPos.x + GameVars.pongSize.x / 2) < (state.paddle2Pos.x + GameVars.paddleSize.x / 2)) {
       controls.put("P2Left", true);
       controls.put("P2Right", false);
     } else {

@@ -27,10 +27,10 @@ public class SSNCheckerTest extends TestCase {
 
   @Parameterized.Parameters
   public static Iterable<String[]> params() {
-      return Arrays.asList(new String[][]{
-          {"00-000-0000", FALSE},
-          {"113-14-1244", TRUE},
-          {"sfsdjhskjdf", FALSE}});
+    return Arrays.asList(new String[][]{
+        {"00-000-0000", FALSE},
+        {"113-14-1244", TRUE},
+        {"sfsdjhskjdf", FALSE}});
   }
 
 

@@ -13,7 +13,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Label;Odens
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -131,6 +131,5 @@ public class Controller {
     this.updateBtn.setOnAction(e -> refresh());
     cityField.textProperty().addListener((e, oldVal, newVal) -> updateDisable(this.updateBtn.disableProperty()));
     countryField.textProperty().addListener((e, oldVal, newVal) -> updateDisable(this.updateBtn.disableProperty()));
-
   }
 }

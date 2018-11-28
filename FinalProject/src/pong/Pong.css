@@ -66,3 +66,39 @@ TableView .column-header .label {
 .dialog-pane .button-bar .container {
   -fx-background-color:black;
 }
+
+TextField {
+  -fx-background-color: black;
+  -fx-font-family: 'Joystix Monospace';
+  -fx-text-fill: #00ff00;
+  -fx-border-color: white;
+  -fx-border-width: 0.05em;
+}
+
+PasswordField {
+  -fx-background-color: black;
+  -fx-font-family: 'Joystix Monospace';
+  -fx-text-fill: #00ff00;
+  -fx-border-color: white;
+  -fx-border-width: 0.05em;
+}
+
+.combo-box-base {
+    -fx-background-color: black;
+    -fx-font-family: 'Joystix Monospace';
+    -fx-text-fill: #00ff00;
+    -fx-border-color: white;
+    -fx-border-width: 0.05em;
+}
+
+ComboBox .list-cell {
+    -fx-background-color: black;
+    -fx-font-family: 'Joystix Monospace';
+    -fx-text-fill: #00ff00;
+}
+
+ComboBox .list-cell:hover {
+    -fx-background-color: gray;
+    -fx-font-family: 'Joystix Monospace';
+    -fx-text-fill: #00ff00;
+}
