@@ -2,16 +2,30 @@ package pong.state;
 
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import pong.Controller;
+import pong.Main;
 import pong.Vec2;
 
+import java.time.Instant;
+import java.util.Random;
+
 public class PlayState implements State {
+
+  MediaPlayer music = new MediaPlayer(new Media(Main.class.getResource("Main.wav").toExternalForm()));
+  private MediaPlayer hitSound = new MediaPlayer(new Media(Main.class.getResource("Hit.wav").toExternalForm()));
+
+  public int maxSpeed = 24;
+
+  private Instant lastPause = Instant.now();
 
   public FlowControl handle() {
 
     if(state.roundNum == 3) {
-      state.stateStack.push(new WonGameState());
-      return FlowControl.Continue;
+      System.out.println("A game was won!");
+      state.nextState = new WonGameState();
+      return FlowControl.TransitionTo;
     }
 
 
@@ -23,8 +37,13 @@ public class PlayState implements State {
       movePaddle(state.paddle2Pos, Controller.Dir.Right);
     if (state.controls.get("P2Left"))
       movePaddle(state.paddle2Pos, Controller.Dir.Left);
-    if(state.controls.get("Pause"))
+
+    Instant now = Instant.now();
+    if(state.controls.get("Pause") && now.isAfter(lastPause.plusMillis(500))) {
+      System.out.println("Last paued at " + lastPause);
+      lastPause = now;
       state.stateStack.push(new PauseState());
+    }
 
     //System.out.println("From " + pongPos);
 
@@ -43,12 +62,28 @@ public class PlayState implements State {
       state.stateStack.push(new WonRoundState(2));
 
 
-    if(!arenaBounds.contains(state.pongPos.x - 1.0, GameVars.middle.y) || !arenaBounds.contains((state.pongPos.x + GameVars.pongSize.x + 1.0), GameVars.middle.y))
+    if(!arenaBounds.contains(state.pongPos.x - 1.0, GameVars.middle.y) || !arenaBounds.contains((state.pongPos.x + GameVars.pongSize.x + 1.0), GameVars.middle.y)) {
+      hitSound.stop();
+      hitSound.play();
+
       state.pongVeloc.x *= -1;
+    }
 
     if (pongBounds.intersects(p1Bounds) || pongBounds.intersects(p2Bounds)) {
+      hitSound.stop();
+      hitSound.play();
+
       state.pongVeloc.y *= -1; // Reflect
-      state.pongVeloc.mult(1.5); // Get faster
+      Vec2 curVeloc = state.pongVeloc.clone();
+      curVeloc.mult(1/curVeloc.length());
+      state.pongVeloc.add(curVeloc); // Get faster
+      if(state.pongVeloc.length() > maxSpeed) {
+        state.pongVeloc.mult(1 / state.pongVeloc.length());
+        state.pongVeloc.mult(maxSpeed);
+      }
+
+      Random rand = new Random(Instant.now().getEpochSecond());
+      curVeloc.x += rand.nextDouble() * 10.0 - 5.0; // x += (rand from (-5, 5)
     }
 
 
@@ -75,11 +110,15 @@ public class PlayState implements State {
   }
 
   public void enter() {
-
+    // Hackish solution. Makes sure we don't get stuck in the pause state.
+    lastPause = Instant.now();
+    music.play();
+    music.setCycleCount(Integer.MAX_VALUE);
   }
 
   public void leave() {
-
+    System.out.println("Leave PlayState");
+    music.stop();
   }
 
 }

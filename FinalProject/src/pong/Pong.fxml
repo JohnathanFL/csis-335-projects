@@ -30,9 +30,9 @@
          <children>
             <TableView fx:id="statTable" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                <TableColumn fx:id="statIdCol" prefWidth="45.33332443237305" text="#" />
-                <TableColumn fx:id="statUserCol" prefWidth="753.666675567627" text="USER" />
-                  <TableColumn fx:id="statScoreCol" prefWidth="75.0" text="SCORE" />
+                <TableColumn fx:id="statIdCol" editable="false" prefWidth="45.33332443237305" sortable="false" text="#" />
+                <TableColumn fx:id="statUserCol" editable="false" prefWidth="753.666675567627" sortable="false" text="USER" />
+                  <TableColumn fx:id="statScoreCol" editable="false" prefWidth="75.0" sortable="false" text="SCORE" />
               </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -86,7 +86,7 @@
                   <Label fx:id="p1ScoreLbl" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="16.0" prefWidth="94.0" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <Label alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="16.0" prefWidth="94.0" text="Score: " GridPane.columnIndex="2" GridPane.rowIndex="2" />
                   <Label fx:id="p2ScoreLbl" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="16.0" prefWidth="94.0" text="0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                  <ImageView fitHeight="175.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.valignment="TOP">
+                  <ImageView fx:id="p1Avatar" fitHeight="175.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnSpan="2" GridPane.halignment="LEFT" GridPane.valignment="TOP">
                      <image>
                         <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
                      </image>
@@ -98,7 +98,7 @@
                      </GridPane.margin>
                   </ImageView>
                   <Label fx:id="p1NameLbl" alignment="CENTER" contentDisplay="CENTER" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" text="PLAYER 1" textFill="#072dfa" GridPane.columnSpan="2" GridPane.rowIndex="1" />
-                  <ImageView fitHeight="175.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
+                  <ImageView fx:id="p2Avatar" fitHeight="175.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.halignment="RIGHT" GridPane.valignment="TOP">
                      <image>
                         <Image url="https://robohash.org/jfl747076@gmail.com?set=set4&amp;bgset=bg1&amp;size=200x200" />
                      </image>

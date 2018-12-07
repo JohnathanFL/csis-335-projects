@@ -102,3 +102,20 @@ ComboBox .list-cell:hover {
     -fx-font-family: 'Joystix Monospace';
     -fx-text-fill: #00ff00;
 }
+
+TableView .table-row-cell {
+    -fx-background-color: black;
+}
+
+TableView .table-row-cell:hover {
+    -fx-background-color: #999999;
+}
+
+TableView .table-cell {
+    -fx-font-family: 'Joystix Monospace';
+    -fx-text-fill: #00ff00;
+}
+
+TableView .table-row-cell:filled:even {
+    -fx-background-color: #333333;
+}

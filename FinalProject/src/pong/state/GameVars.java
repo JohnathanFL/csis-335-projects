@@ -3,19 +3,20 @@ package pong.state;
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BackgroundFill;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Rectangle;
-import pong.BgSet;
-import pong.IconSet;
-import pong.User;
-import pong.Vec2;
+import pong.*;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Map;
 
 // I know, I know. An essentially global state. In my defense, JavaFX ain't exactly built properly for a game to begin with.
 public class GameVars {
+
   public static final Vec2 extents = new Vec2(1600 * 0.75, 900);
   public static final Vec2 middle = new Vec2(extents.x / 2, extents.y / 2);
   public static final Vec2 paddleSize = new Vec2(150, 25);
@@ -34,9 +35,13 @@ public class GameVars {
   public double speedMult = 5.0;
   public int roundNum = 0;
   public int p1Score = 0, p2Score = 0;
-  Map<String, Boolean> controls;
+  public Map<String, Boolean> controls = new HashMap<>();
+  public Map<String, Boolean> prevControls = new HashMap<>();
 
-  public static final User botUser = new User(1, "Botty McBotface", "botty@bot.net", IconSet.Suave, BgSet.Scenery);
+  public State nextState = null;
+
+  public static final User botUser = new User(1, "Botty McBotface", "botty@bot.net", IconSet.Suave, BgSet.Scenery),
+    defaultP1 = new User(-1, "WAITING FOR LOGIN", "default", IconSet.Standard, BgSet.Scenery);
   public User p1, p2 = botUser;
 
   public GameVars() {
@@ -54,12 +59,10 @@ public class GameVars {
       pongVeloc = new Vec2((Math.random() - 0.5) * 2.0, (Math.random() - 0.5) * 2.0);
       pongVeloc.normalize();
       pongVeloc.mult(5.0);
-      if (pongVeloc.length() >= 8.0)
-        pongVeloc.mult(1 / 2.0);
-    } while (Math.abs(pongVeloc.y) < 0.5);
+    } while (Math.abs(pongVeloc.y) < (pongVeloc.length() * 0.6));
   }
 
-  public void init(Map<String, Boolean> controls, Label p1ScoreLbl, Label p2ScoreLbl, Label goalText) {
+  public void init(Label p1ScoreLbl, Label p2ScoreLbl, Label goalText) {
     this.controls = controls;
     this.p1ScoreLbl = p1ScoreLbl;
     this.p2ScoreLbl = p2ScoreLbl;

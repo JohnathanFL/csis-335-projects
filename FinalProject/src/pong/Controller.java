@@ -10,11 +10,11 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
@@ -22,16 +22,38 @@ import javafx.util.Duration;
 import pong.state.*;
 
 import java.sql.*;
-import java.util.*;
+import java.time.Instant;
+import java.util.Deque;
+import java.util.Map;
+import java.util.Random;
+import java.util.TreeMap;
 
 public class Controller {
+  static final String loginText = "Log in", logoutText = "Logout";
   public static Connection conn;
-  public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName, tryLogin, getAllPlayed;
+  public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName, tryLogin, getAllPlayed, getLeaderboard;
+  public static Map<KeyCode, String> mappings;
+  public static TableView staticStatTable;
+  static ObservableList<Leaderboard> leaderboard = FXCollections.observableArrayList();
   public Label p1NameLbl;
   public Label p2NameLbl;
   public TableColumn statIdCol;
   public TableColumn statUserCol;
   public TableColumn statScoreCol;
+  public ImageView p1Avatar, p2Avatar;
+  public Label p1ScoreLbl;
+  public Label p2ScoreLbl;
+  public Label goalText;
+  public Button p1Login, p2Login, viewLeaderboard, backToGameBtn;
+  public Canvas gfx;
+  public TableView statTable;
+  //Deque<State> stateStack = new ArrayDeque<>();
+
+  // {paddle1: {leftCtrl, rightCtrl}, paddle2: ..., pauseBtn
+  // gives us simple "just pressed" style capabilities
+  public GridPane gameScene, statBox;
+  Integer handleAIInterval = 0;
+  State prevState = null;
 
   public static boolean call(PreparedStatement stmt, Object... obj) {
 
@@ -70,37 +92,36 @@ public class Controller {
     }
   }
 
-  public Label p1ScoreLbl;
-  public Label p2ScoreLbl;
-  public Label goalText;
-  public Button p1Login, p2Login, viewLeaderboard, backToGameBtn;
-  public Canvas gfx;
-  public TableView statTable;
-  public GridPane gameScene, statBox;
-  //Deque<State> stateStack = new ArrayDeque<>();
+  public static void refresh() {
+    try {
+      ResultSet allPlayed = query(getLeaderboard);
+      leaderboard.clear();
 
-  // {paddle1: {leftCtrl, rightCtrl}, paddle2: ..., pauseBtn
-  public Map<String, Boolean> controls = new HashMap<>(),
-  // gives us simple "just pressed" style capabilities
-  lastControls = new HashMap<>();
+      int i = 1;
+      while (allPlayed.next())
+        leaderboard.add(new Leaderboard(i++, allPlayed));
 
 
-  Integer handleAIInterval = 0;
-
-  public void setupHandlers() {
-    gfx.getScene().setOnKeyReleased(key -> setKeyStatesTo(false, key.getCode()));
-    gfx.getScene().setOnKeyPressed(key -> {
-      setKeyStatesTo(true, key.getCode());
-    });
+      staticStatTable.setItems(leaderboard);
+    } catch (SQLException e) {
+      System.out.println(e);
+    }
   }
 
-  public static Map<KeyCode, String> mappings;
+  public void setupHandlers() {
+    gfx.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> setKeyStatesTo(true, event.getCode()));
+    gfx.getScene().addEventFilter(KeyEvent.KEY_RELEASED, event -> setKeyStatesTo(false, event.getCode()));
+  }
 
   public void setKeyStatesTo(boolean bool, KeyCode key) {
+    //System.out.println("Got key " + key);
+
     String which;
+    if (!mappings.containsKey(key))
+      return;
     which = mappings.get(key);
-    lastControls.put(which, controls.get(which));
-    controls.put(which, bool);
+    State.state.prevControls.put(which, State.state.controls.get(which));
+    State.state.controls.put(which, bool);
 
     //System.out.println(this.controls);
   }
@@ -123,11 +144,10 @@ public class Controller {
     ctx.fillRect(tmp.x, tmp.y, GameVars.paddleSize.x, GameVars.paddleSize.y);
   }
 
-  public void drawPong(Vec2 pos, double angle, Paint color) {
+  public void drawPong(Vec2 pos, double angle, Color color) {
     GraphicsContext ctx = gfx.getGraphicsContext2D();
 
     ctx.setLineWidth(5);
-    ctx.setFill(color);
     ctx.setStroke(color);
 
     Vec2 tmp = new Vec2(pos);
@@ -138,6 +158,21 @@ public class Controller {
 //    tmp.y = Math.round(tmp.y);
 //    tmp.mult(magic);
 
+    if (State.state.pongVeloc.length() >= 6.0) {
+      Color tmpColor = color.invert().invert();
+      Vec2 dir = State.state.pongVeloc.clone();
+      Vec2 adderDir = dir.clone();
+      adderDir.normalize();
+      adderDir.mult(1.0 / 5.0);
+      for (int i = 0; i < 10; i++) {
+        tmpColor = tmpColor.deriveColor(0.0, 1.0, 0.95, 0.95);
+        ctx.setFill(tmpColor);
+        ctx.fillArc(tmp.x - dir.x, tmp.y - dir.y, GameVars.pongSize.x, GameVars.pongSize.y, 0, angle, ArcType.ROUND);
+        dir.add(adderDir);
+      }
+    }
+
+    ctx.setFill(color);
     ctx.fillArc(tmp.x, tmp.y, GameVars.pongSize.x, GameVars.pongSize.y, 0, angle, ArcType.ROUND);
   }
 
@@ -179,7 +214,8 @@ public class Controller {
     System.out.println("Creating user...");
     TextInputDialog dia = new TextInputDialog();
     dia.getDialogPane().getStylesheets().add(getClass().getResource("Pong.css").toExternalForm());
-
+    dia.setHeaderText("REGISTER");
+    dia.setGraphic(null);
 
     TextField nameField = new TextField(), emailField = new TextField(), passwdField = new PasswordField();
     ComboBox<IconSet> iconCombo = new ComboBox<>(FXCollections.observableArrayList(IconSet.Standard, IconSet.Monster, IconSet.Suave, IconSet.Kitten));
@@ -241,11 +277,12 @@ public class Controller {
       State.state.p1 = null;
       p1Login.setText(loginText);
       p1NameLbl.setText("PLAYER 1");
-    }
-    else if (player == 2) {
+      updateAvatar(1, GameVars.defaultP1);
+    } else if (player == 2) {
       State.state.p2 = GameVars.botUser;
       p2Login.setText(loginText);
-      p1NameLbl.setText("PLAYER 2");
+      p2NameLbl.setText("PLAYER 2");
+      updateAvatar(2, GameVars.botUser);
     }
   }
 
@@ -259,6 +296,7 @@ public class Controller {
       if (login(player) && player == 1) {
         State.state.stateStack.pop();
         State.state.stateStack.push(new PlayState());
+        State.state.stateStack.push(new WaitState(5));
       }
     }
   }
@@ -266,8 +304,11 @@ public class Controller {
   private boolean login(int player) {
 
     Deque<State> stateStack = State.state.stateStack;
-    if (!PauseState.class.isInstance(stateStack.getFirst()))
+    boolean wePaused = false;
+    if (!(stateStack.getFirst() instanceof PauseState) && !(stateStack.getFirst() instanceof DormantState)) {
       stateStack.push(new PauseState());
+      wePaused = true;
+    }
 
     TextInputDialog dia = new TextInputDialog();
     dia.getDialogPane().getStylesheets().add(getClass().getResource("Pong.css").toExternalForm());
@@ -329,37 +370,34 @@ public class Controller {
 
     if (ret[0]) {
       stateStack.push(new PlayState());
-      if(player == 1) {
+      if (player == 1) {
         p1Login.setText(logoutText);
         p1NameLbl.setText(State.state.p1.name);
-      }
-
-      else {
+        updateAvatar(1, State.state.p1);
+      } else {
         p2Login.setText(logoutText);
         p2NameLbl.setText(State.state.p2.name);
+        updateAvatar(2, State.state.p2);
       }
     }
+
+    if (wePaused)
+      stateStack.pop();
 
     return ret[0];
   }
 
-  State prevState = null;
-
-  public void refresh() {
-    try {
-      ResultSet allPlayed = query(getAllPlayed);
-      ObservableList<Played> played = FXCollections.observableArrayList();
-      while (allPlayed.next())
-        played.add(new Played(allPlayed));
-
-
-      statTable.setItems(played);
-    } catch (SQLException e) {
-      System.out.println(e);
-    }
+  public void updateAvatar(int num, User profile) {
+    String reqString = "https://robohash.org/" + profile.email + "?set=set" + profile.icon.val + "&bgset=bg" + profile.background.val + "&size=200x200";
+    System.out.println(reqString);
+    if (num == 1)
+      p1Avatar.setImage(new Image(reqString));
+    else
+      p2Avatar.setImage(new Image(reqString));
   }
 
   public void initialize() {
+    staticStatTable = statTable;
     System.out.println("Initializing...");
     try {
       conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/leejo_pong?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC&useSSL=false", "leejo", "OverlyUnderlyPoweredMS");
@@ -368,10 +406,18 @@ public class Controller {
       getUserDetails = conn.prepareStatement("select id, displayName, email, genSet, bgSet from User where User.id = ?;");
       getIdFromName = conn.prepareStatement("select id from User where User.displayName like lcase(?);");
       tryLogin = conn.prepareStatement("select id from User where User.displayName like lcase(?) and User.passwd like ?;");
-      getAllPlayed = conn.prepareStatement("select * from Played;");
+      getAllPlayed = conn.prepareStatement("select * from Leaderboard;");
+      getLeaderboard = conn.prepareStatement("select displayName, winCount from Leaderboard;");
     } catch (SQLException e) {
       System.out.println(e);
     }
+
+    updateAvatar(1, GameVars.defaultP1);
+    updateAvatar(2, GameVars.botUser);
+
+    statIdCol.setCellValueFactory(new PropertyValueFactory<Leaderboard, Integer>("rank"));
+    statUserCol.setCellValueFactory(new PropertyValueFactory<Leaderboard, String>("username"));
+    statScoreCol.setCellValueFactory(new PropertyValueFactory<Leaderboard, Integer>("wins"));
 
     refresh();
 
@@ -379,23 +425,24 @@ public class Controller {
         {KeyCode.A, "P2Left"},
         {KeyCode.D, "P2Right"},
         {KeyCode.RIGHT, "P1Right"},
-        {KeyCode.LEFT, "P1Left"}
+        {KeyCode.LEFT, "P1Left"},
+        {KeyCode.ESCAPE, "Pause"},
     };
 
     mappings = new TreeMap<>();
-    for(Object[] ar : newMappings)
-      mappings.put((KeyCode)ar[0], (String)ar[1]);
+    for (Object[] ar : newMappings)
+      mappings.put((KeyCode) ar[0], (String) ar[1]);
 
     p2NameLbl.setText(State.state.p2.name);
 
-    State.state.init(controls, p1ScoreLbl, p2ScoreLbl, goalText);
+    State.state.init(p1ScoreLbl, p2ScoreLbl, goalText);
     State.state.stateStack.push(new DormantState()); // Do nothing until a toggleLogin
     GameVars info = State.state;
 
     // If these aren't pre-initialized, we'll get nullptr exceptions galore.
     String[] usedMappings = {"P1Left", "P2Left", "P1Right", "P2Right", "Pause"};
     for (String str : usedMappings)
-      controls.put(str, false);
+      info.controls.put(str, false);
 
     System.out.println("Creating update loop...");
     Timeline tick = TimelineBuilder
@@ -409,15 +456,26 @@ public class Controller {
 
                   State curState = info.stateStack.getFirst();
                   if (curState != prevState) { // We changed states, so we should handle that
-                    if(prevState != null)
+                    if (prevState != null)
                       prevState.leave();
                     curState.enter();
                   }
-
-                  if (curState.handle() == FlowControl.LeaveState)
+                  FlowControl retCode = curState.handle();
+                  if (retCode == FlowControl.LeaveState)
                     info.stateStack.pop();
+                  else if (retCode == FlowControl.TransitionTo) {
+                    curState.leave();
+                    info.stateStack.pop();
+                    info.stateStack.push(info.nextState);
+                    curState = info.nextState;
+                    curState.enter();
+                    info.nextState = null;
+                  }
 
                   draw();
+
+                  if (prevState != null && prevState != curState)
+                    System.out.println("Went from " + prevState + " to " + curState);
 
                   prevState = curState;
 
@@ -439,17 +497,21 @@ public class Controller {
       toggleLogin(2);
     });
 
-    viewLeaderboard.setOnAction(e -> statBox.toFront());
-    backToGameBtn.setOnAction(e -> gameScene.toFront());
+    viewLeaderboard.setOnAction(e -> {statBox.toFront();
+    if(State.state.stateStack.getFirst().getClass() != PauseState.class)
+      State.state.stateStack.push(new PauseState());
+    });
+    backToGameBtn.setOnAction(e -> {gameScene.toFront(); State.state.stateStack.pop();});
 
 
     System.out.println("Done initializing");
   }
-  static final String loginText = "Log in", logoutText = "Logout";
 
   private void handleAI() {
+    Random gen = new Random(Instant.now().getEpochSecond());
+
     // Only handle every x ticks
-    if (handleAIInterval++ < 7)
+    if (handleAIInterval++ < (gen.nextDouble() * 15.0))
       return;
     else
       handleAIInterval = 0;
@@ -458,11 +520,11 @@ public class Controller {
 
     // Only going off of the middle of each
     if ((state.pongPos.x + GameVars.pongSize.x / 2) < (state.paddle2Pos.x + GameVars.paddleSize.x / 2)) {
-      controls.put("P2Left", true);
-      controls.put("P2Right", false);
+      state.controls.put("P2Left", true);
+      state.controls.put("P2Right", false);
     } else {
-      controls.put("P2Left", false);
-      controls.put("P2Right", true);
+      state.controls.put("P2Left", false);
+      state.controls.put("P2Right", true);
     }
   }
 
