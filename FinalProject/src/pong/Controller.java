@@ -159,10 +159,10 @@ public class Controller {
     ctx.setStroke(color);
 
     Vec2 veloc = State.state.pongVeloc.clone();
-    Color trailColor = color.invert().invert();
+    Color trailColor = color.deriveColor(0.0, 1.0, 1.0, 1.0);
     Iterator<Vec2> posIter = prevPongPoses.descendingIterator();
     for(int i = 0; i < veloc.length() - 1; i++) {
-      trailColor = new Color(1.0, 0.0, 0.0, 1.0);
+      trailColor = trailColor.deriveColor(0.0, 1.0, 0.95, 0.90);
       Vec2 tmp = posIter.next();
 
       ctx.setFill(trailColor);
@@ -210,6 +210,9 @@ public class Controller {
     btn.setDisable(!res);
   }
 
+  /**
+   * Shows a dialog to create a new user
+   */
   public void createUser() {
     System.out.println("Creating user...");
     TextInputDialog dia = new TextInputDialog();
@@ -536,7 +539,7 @@ public class Controller {
 
     //System.out.println(gen.nextDouble());
     // Only handle every x ticks
-    if (gen.nextDouble() > 0.25)
+    if (gen.nextDouble() > 0.30)
       return;
     else
       handleAIInterval = 0;
