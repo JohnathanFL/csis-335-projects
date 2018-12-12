@@ -119,3 +119,8 @@ TableView .table-cell {
 TableView .table-row-cell:filled:even {
     -fx-background-color: #333333;
 }
+
+*.label.content{
+    -fx-background-color: black;
+    -fx-font-size: 0.8em;
+}

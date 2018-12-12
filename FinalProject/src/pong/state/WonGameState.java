@@ -1,3 +1,11 @@
+/**
+ * Johnathan Lee
+ * CSIS 335
+ * Final Project
+ * Due 12/12/18
+ *
+ * A classic game of pong, with a slight scoring tweak.
+ */
 package pong.state;
 
 import javafx.scene.media.Media;
@@ -5,7 +13,6 @@ import javafx.scene.media.MediaPlayer;
 import pong.Controller;
 import pong.Main;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.time.Instant;
 
@@ -14,17 +21,19 @@ public class WonGameState implements State {
   int winner;
 
 
-//  MediaPlayer mediaPlayer = new MediaPlayer(new Media(Main.class.getResource("Main.mp3").toExternalForm()));
+  MediaPlayer mediaPlayer = new MediaPlayer(new Media(Main.class.getResource("WonGame.wav").toExternalForm()));
 
-  WonGameState() {}
+  WonGameState() {
+  }
 
   public FlowControl handle() {
-    if(Instant.now().isAfter(endAt)) {
+    if (Instant.now().isAfter(endAt)) {
       state.nextState = new WaitState(4, new PlayState());
       return FlowControl.TransitionTo;
     }
     return FlowControl.Continue;
   }
+
   public void enter() {
     endAt = Instant.now().plusMillis(3 * 1000);
     state.goalText.setVisible(true);
@@ -32,7 +41,10 @@ public class WonGameState implements State {
     winner = (winnerText == 1 ? State.state.p1.id : State.state.p2.id);
 
     state.goalText.setText("PLAYER " + winnerText + " WINS!");
+
+    mediaPlayer.play();
   }
+
   public void leave() {
     PreparedStatement inserter = Controller.addGameWon;
 
@@ -51,5 +63,7 @@ public class WonGameState implements State {
     state.goalText.setVisible(false);
 
     Controller.refresh();
+
+    mediaPlayer.stop();
   }
 }

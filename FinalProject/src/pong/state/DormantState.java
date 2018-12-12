@@ -1,10 +1,15 @@
+/**
+ * Johnathan Lee
+ * CSIS 335
+ * Final Project
+ * Due 12/12/18
+ *
+ * A classic game of pong, with a slight scoring tweak.
+ */
 package pong.state;
 
-import javafx.scene.media.AudioClip;
-import javafx.scene.media.AudioTrack;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import pong.Main;
 
 import java.net.URISyntaxException;
@@ -27,13 +32,14 @@ public class DormantState implements State {
   public FlowControl handle() {
     return FlowControl.Continue;
   }
-  public void enter(){
+
+  public void enter() {
     state.goalText.setText("READY PLAYER 1");
     state.goalText.setVisible(true);
 
     state.p1Score = state.p2Score = 0;
-    state.p1ScoreLbl.setText(""+state.p1Score);
-    state.p2ScoreLbl.setText(""+state.p2Score);
+    state.p1ScoreLbl.setText("" + state.p1Score);
+    state.p2ScoreLbl.setText("" + state.p2Score);
 
     mediaPlayer.play();
     mediaPlayer.setCycleCount(Integer.MAX_VALUE);
@@ -41,7 +47,7 @@ public class DormantState implements State {
     state.resetPos();
   }
 
-  public void leave(){
+  public void leave() {
     state.goalText.setVisible(false);
 
     mediaPlayer.pause();

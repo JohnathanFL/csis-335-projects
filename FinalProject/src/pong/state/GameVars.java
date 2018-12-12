@@ -1,13 +1,19 @@
+/**
+ * Johnathan Lee
+ * CSIS 335
+ * Final Project
+ * Due 12/12/18
+ *
+ * A classic game of pong, with a slight scoring tweak.
+ */
+
 package pong.state;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.shape.Arc;
-import javafx.scene.shape.Rectangle;
-import pong.*;
+import pong.BgSet;
+import pong.IconSet;
+import pong.User;
+import pong.Vec2;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -21,8 +27,9 @@ public class GameVars {
   public static final Vec2 middle = new Vec2(extents.x / 2, extents.y / 2);
   public static final Vec2 paddleSize = new Vec2(150, 25);
   public static final Vec2 pongSize = new Vec2(25, 25);
+  public static final User botUser = new User(1, "Botty McBotface", "botty@bot.net", IconSet.Suave, BgSet.Scenery),
+      defaultP1 = new User(-1, "WAITING FOR LOGIN", "default", IconSet.Standard, BgSet.Scenery);
   public Deque<State> stateStack;
-
   // JavaFX stuff
   public Label p1ScoreLbl = null;
   public Label p2ScoreLbl = null;
@@ -37,11 +44,7 @@ public class GameVars {
   public int p1Score = 0, p2Score = 0;
   public Map<String, Boolean> controls = new HashMap<>();
   public Map<String, Boolean> prevControls = new HashMap<>();
-
   public State nextState = null;
-
-  public static final User botUser = new User(1, "Botty McBotface", "botty@bot.net", IconSet.Suave, BgSet.Scenery),
-    defaultP1 = new User(-1, "WAITING FOR LOGIN", "default", IconSet.Standard, BgSet.Scenery);
   public User p1, p2 = botUser;
 
   public GameVars() {

@@ -1,6 +1,12 @@
+/**
+ * Johnathan Lee
+ * CSIS 335
+ * Final Project
+ * Due 12/12/18
+ *
+ * A classic game of pong, with a slight scoring tweak.
+ */
 package pong;
-
-import javafx.scene.Scene;
 
 public enum BgSet {
   None(0),
@@ -14,9 +20,9 @@ public enum BgSet {
   }
 
   public static BgSet from(int val) {
-    if(val == Scenery.val)
+    if (val == Scenery.val)
       return Scenery;
-    else if(val == Radiance.val)
+    else if (val == Radiance.val)
       return Radiance;
     else
       return None;

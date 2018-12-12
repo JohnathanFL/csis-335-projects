@@ -1,3 +1,11 @@
+/**
+ * Johnathan Lee
+ * CSIS 335
+ * Final Project
+ * Due 12/12/18
+ *
+ * A classic game of pong, with a slight scoring tweak.
+ */
 package pong;
 
 import javafx.animation.KeyFrame;
@@ -5,6 +13,7 @@ import javafx.animation.Timeline;
 import javafx.animation.TimelineBuilder;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,10 +32,7 @@ import pong.state.*;
 
 import java.sql.*;
 import java.time.Instant;
-import java.util.Deque;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 public class Controller {
   static final String loginText = "Log in", logoutText = "Logout";
@@ -34,7 +40,7 @@ public class Controller {
   public static PreparedStatement addGameWon, addUser, getUserDetails, getIdFromName, tryLogin, getAllPlayed, getLeaderboard;
   public static Map<KeyCode, String> mappings;
   public static TableView staticStatTable;
-  static ObservableList<Leaderboard> leaderboard = FXCollections.observableArrayList();
+  static ObservableList<Highscore> leaderboard = FXCollections.observableArrayList();
   public Label p1NameLbl;
   public Label p2NameLbl;
   public TableColumn statIdCol;
@@ -54,6 +60,7 @@ public class Controller {
   public GridPane gameScene, statBox;
   Integer handleAIInterval = 0;
   State prevState = null;
+  Random gen = new Random(Instant.now().getEpochSecond());
 
   public static boolean call(PreparedStatement stmt, Object... obj) {
 
@@ -99,7 +106,7 @@ public class Controller {
 
       int i = 1;
       while (allPlayed.next())
-        leaderboard.add(new Leaderboard(i++, allPlayed));
+        leaderboard.add(new Highscore(i++, allPlayed));
 
 
       staticStatTable.setItems(leaderboard);
@@ -144,36 +151,29 @@ public class Controller {
     ctx.fillRect(tmp.x, tmp.y, GameVars.paddleSize.x, GameVars.paddleSize.y);
   }
 
+  private Deque<Vec2> prevPongPoses = new ArrayDeque<Vec2>();
   public void drawPong(Vec2 pos, double angle, Color color) {
     GraphicsContext ctx = gfx.getGraphicsContext2D();
 
     ctx.setLineWidth(5);
     ctx.setStroke(color);
 
-    Vec2 tmp = new Vec2(pos);
-//    double magic = 5.0;
-//
-//    tmp.mult(1.0/magic);
-//    tmp.x = Math.round(tmp.x);
-//    tmp.y = Math.round(tmp.y);
-//    tmp.mult(magic);
+    Vec2 veloc = State.state.pongVeloc.clone();
+    Color trailColor = color.invert().invert();
+    Iterator<Vec2> posIter = prevPongPoses.descendingIterator();
+    for(int i = 0; i < veloc.length() - 1; i++) {
+      trailColor = new Color(1.0, 0.0, 0.0, 1.0);
+      Vec2 tmp = posIter.next();
 
-    if (State.state.pongVeloc.length() >= 6.0) {
-      Color tmpColor = color.invert().invert();
-      Vec2 dir = State.state.pongVeloc.clone();
-      Vec2 adderDir = dir.clone();
-      adderDir.normalize();
-      adderDir.mult(1.0 / 5.0);
-      for (int i = 0; i < 10; i++) {
-        tmpColor = tmpColor.deriveColor(0.0, 1.0, 0.95, 0.95);
-        ctx.setFill(tmpColor);
-        ctx.fillArc(tmp.x - dir.x, tmp.y - dir.y, GameVars.pongSize.x, GameVars.pongSize.y, 0, angle, ArcType.ROUND);
-        dir.add(adderDir);
-      }
+      ctx.setFill(trailColor);
+      ctx.fillArc(tmp.x, tmp.y, GameVars.pongSize.x, GameVars.pongSize.y, 0, angle, ArcType.ROUND);
     }
 
     ctx.setFill(color);
-    ctx.fillArc(tmp.x, tmp.y, GameVars.pongSize.x, GameVars.pongSize.y, 0, angle, ArcType.ROUND);
+    ctx.fillArc(pos.x, pos.y, GameVars.pongSize.x, GameVars.pongSize.y, 0, angle, ArcType.ROUND);
+
+    prevPongPoses.remove();
+    prevPongPoses.add(pos.clone());
   }
 
   public void draw() {
@@ -384,12 +384,25 @@ public class Controller {
     if (wePaused)
       stateStack.pop();
 
+    if (!ret[0]) {
+      Alert error = new Alert(Alert.AlertType.ERROR, "Incorrect username and/or password");
+      error.getDialogPane().getStylesheets().add(getClass().getResource("Pong.css").toExternalForm());
+      error.setGraphic(null);
+      error.showAndWait();
+    }
+
     return ret[0];
   }
 
   public void updateAvatar(int num, User profile) {
     String reqString = "https://robohash.org/" + profile.email + "?set=set" + profile.icon.val + "&bgset=bg" + profile.background.val + "&size=200x200";
-    System.out.println(reqString);
+    System.out.println("Requesting avatar " + reqString + " for player " + num);
+
+    Image next;
+    do
+      next = new Image(reqString);
+    while (next.isError());
+
     if (num == 1)
       p1Avatar.setImage(new Image(reqString));
     else
@@ -406,7 +419,7 @@ public class Controller {
       getUserDetails = conn.prepareStatement("select id, displayName, email, genSet, bgSet from User where User.id = ?;");
       getIdFromName = conn.prepareStatement("select id from User where User.displayName like lcase(?);");
       tryLogin = conn.prepareStatement("select id from User where User.displayName like lcase(?) and User.passwd like ?;");
-      getAllPlayed = conn.prepareStatement("select * from Leaderboard;");
+      getAllPlayed = conn.prepareStatement("select * from Played;");
       getLeaderboard = conn.prepareStatement("select displayName, winCount from Leaderboard;");
     } catch (SQLException e) {
       System.out.println(e);
@@ -415,9 +428,9 @@ public class Controller {
     updateAvatar(1, GameVars.defaultP1);
     updateAvatar(2, GameVars.botUser);
 
-    statIdCol.setCellValueFactory(new PropertyValueFactory<Leaderboard, Integer>("rank"));
-    statUserCol.setCellValueFactory(new PropertyValueFactory<Leaderboard, String>("username"));
-    statScoreCol.setCellValueFactory(new PropertyValueFactory<Leaderboard, Integer>("wins"));
+    statIdCol.setCellValueFactory(new PropertyValueFactory<Highscore, Integer>("rank"));
+    statUserCol.setCellValueFactory(new PropertyValueFactory<Highscore, String>("username"));
+    statScoreCol.setCellValueFactory(new PropertyValueFactory<Highscore, Integer>("wins"));
 
     refresh();
 
@@ -444,43 +457,16 @@ public class Controller {
     for (String str : usedMappings)
       info.controls.put(str, false);
 
+    for(int i = 0; i < 24; i++)
+      prevPongPoses.add(State.state.pongPos.clone());
+
     System.out.println("Creating update loop...");
     Timeline tick = TimelineBuilder
         .create()
         .keyFrames(
             new KeyFrame(
                 new Duration(16.667), // 60 FPS = 16.67ms/frame
-                ev -> {
-                  if (State.state.p2 == GameVars.botUser)
-                    handleAI();
-
-                  State curState = info.stateStack.getFirst();
-                  if (curState != prevState) { // We changed states, so we should handle that
-                    if (prevState != null)
-                      prevState.leave();
-                    curState.enter();
-                  }
-                  FlowControl retCode = curState.handle();
-                  if (retCode == FlowControl.LeaveState)
-                    info.stateStack.pop();
-                  else if (retCode == FlowControl.TransitionTo) {
-                    curState.leave();
-                    info.stateStack.pop();
-                    info.stateStack.push(info.nextState);
-                    curState = info.nextState;
-                    curState.enter();
-                    info.nextState = null;
-                  }
-
-                  draw();
-
-                  if (prevState != null && prevState != curState)
-                    System.out.println("Went from " + prevState + " to " + curState);
-
-                  prevState = curState;
-
-                  //System.out.println(info.stateStack);
-                }
+                this::onUpdate
             )
         )
         .cycleCount(Timeline.INDEFINITE)
@@ -497,21 +483,60 @@ public class Controller {
       toggleLogin(2);
     });
 
-    viewLeaderboard.setOnAction(e -> {statBox.toFront();
-    if(State.state.stateStack.getFirst().getClass() != PauseState.class)
-      State.state.stateStack.push(new PauseState());
+    viewLeaderboard.setOnAction(e -> {
+      statBox.toFront();
+      if (State.state.stateStack.getFirst().getClass() != PauseState.class)
+        State.state.stateStack.push(new PauseState());
     });
-    backToGameBtn.setOnAction(e -> {gameScene.toFront(); State.state.stateStack.pop();});
+    backToGameBtn.setOnAction(e -> {
+      gameScene.toFront();
+      State.state.stateStack.pop();
+    });
 
 
     System.out.println("Done initializing");
+
+
+  }
+
+  public void onUpdate(ActionEvent ev) {
+    GameVars state = State.state;
+    if (State.state.p2 == GameVars.botUser)
+      handleAI();
+
+    State curState = state.stateStack.getFirst();
+    if (curState != prevState) { // We changed states, so we should handle that
+      if (prevState != null)
+        prevState.leave();
+      curState.enter();
+    }
+    FlowControl retCode = curState.handle();
+    if (retCode == FlowControl.LeaveState)
+      state.stateStack.pop();
+    else if (retCode == FlowControl.TransitionTo) {
+      curState.leave();
+      state.stateStack.pop();
+      state.stateStack.push(state.nextState);
+      curState = state.nextState;
+      curState.enter();
+      state.nextState = null;
+    }
+
+    draw();
+
+    if (prevState != null && prevState != curState)
+      System.out.println("Went from " + prevState + " to " + curState);
+
+    prevState = curState;
+
+    //System.out.println(info.stateStack);
   }
 
   private void handleAI() {
-    Random gen = new Random(Instant.now().getEpochSecond());
 
+    //System.out.println(gen.nextDouble());
     // Only handle every x ticks
-    if (handleAIInterval++ < (gen.nextDouble() * 15.0))
+    if (gen.nextDouble() > 0.25)
       return;
     else
       handleAIInterval = 0;

@@ -1,3 +1,11 @@
+/**
+ * Johnathan Lee
+ * CSIS 335
+ * Final Project
+ * Due 12/12/18
+ *
+ * A classic game of pong, with a slight scoring tweak.
+ */
 package pong;
 
 import java.sql.ResultSet;
@@ -19,7 +27,7 @@ public class User {
 
   public User(ResultSet res) {
     try {
-      if(res.isBeforeFirst())
+      if (res.isBeforeFirst())
         res.next();
       this.id = res.getInt("id");
       this.name = res.getString("displayName");
