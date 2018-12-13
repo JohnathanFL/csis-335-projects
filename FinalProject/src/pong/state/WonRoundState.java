@@ -14,6 +14,9 @@ import pong.Main;
 
 import java.time.Instant;
 
+/**
+ * Tells the players there was a goal, then goes back on its business
+ */
 class WonRoundState implements State {
   int winner;
   Instant endAt = Instant.now().plusMillis(1500);

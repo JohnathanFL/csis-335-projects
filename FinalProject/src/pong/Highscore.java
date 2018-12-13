@@ -11,6 +11,9 @@ package pong;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * A record from the Leaderboard view.
+ */
 public class Highscore {
   int rank;
   String username;

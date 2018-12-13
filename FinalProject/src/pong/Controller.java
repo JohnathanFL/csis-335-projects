@@ -62,6 +62,12 @@ public class Controller {
   State prevState = null;
   Random gen = new Random(Instant.now().getEpochSecond());
 
+  /**
+   * Sugar for .execute()
+   * @param stmt Statement to execute
+   * @param obj All parameters for stmt
+   * @return stmt.execute()
+   */
   public static boolean call(PreparedStatement stmt, Object... obj) {
 
     int i = 1;
@@ -81,6 +87,12 @@ public class Controller {
     }
   }
 
+  /**
+   * Sugar for .executeQuery
+   * @param stmt Statement to call
+   * @param obj All parameters to set
+   * @return ResultSet from running stmt
+   */
   public static ResultSet query(PreparedStatement stmt, Object... obj) {
     int i = 1;
     for (Object o : obj)
@@ -115,11 +127,19 @@ public class Controller {
     }
   }
 
+  /**
+   * Adds the handlers for keys. Must be called AFTER the window is made.
+   */
   public void setupHandlers() {
     gfx.getScene().addEventFilter(KeyEvent.KEY_PRESSED, event -> setKeyStatesTo(true, event.getCode()));
     gfx.getScene().addEventFilter(KeyEvent.KEY_RELEASED, event -> setKeyStatesTo(false, event.getCode()));
   }
 
+  /**
+   * Sets the state of the control mapped to key to bool
+   * @param bool New state
+   * @param key Key to check for in mappings
+   */
   public void setKeyStatesTo(boolean bool, KeyCode key) {
     //System.out.println("Got key " + key);
 
@@ -133,6 +153,11 @@ public class Controller {
     //System.out.println(this.controls);
   }
 
+  /**
+   * Draws a paddle on the screen
+   * @param pos Where is the paddle?
+   * @param color What color is the paddle?
+   */
   public void drawPaddle(Vec2 pos, Paint color) {
     GraphicsContext ctx = gfx.getGraphicsContext2D();
     ctx.setLineWidth(5);
@@ -151,7 +176,15 @@ public class Controller {
     ctx.fillRect(tmp.x, tmp.y, GameVars.paddleSize.x, GameVars.paddleSize.y);
   }
 
+  /** For trails **/
   private Deque<Vec2> prevPongPoses = new ArrayDeque<Vec2>();
+
+  /**
+   * Draws a pong on the screen
+   * @param pos Where to draw
+   * @param angle How full is the pong?
+   * @param color What color is the pong?
+   */
   public void drawPong(Vec2 pos, double angle, Color color) {
     GraphicsContext ctx = gfx.getGraphicsContext2D();
 
@@ -176,6 +209,9 @@ public class Controller {
     prevPongPoses.add(pos.clone());
   }
 
+  /**
+   * Perform drawing on pong, paddles, etc
+   */
   public void draw() {
     GraphicsContext ctx = gfx.getGraphicsContext2D();
     ctx.clearRect(0, 0, GameVars.extents.x, GameVars.extents.y);
@@ -190,6 +226,11 @@ public class Controller {
     drawPong(info.pongPos, 360, Color.PURPLE);
   }
 
+  /**
+   * Turns an array into a bunch of gridpane children.
+   * @param grid Grid to parent to
+   * @param nodes Nodes. Arranged in the same way the grid pane will have them (row 0  col 0 to index [0][0])
+   */
   public void gridSet(GridPane grid, Node[][] nodes) {
     int rowNum = 0;
     for (Node[] row : nodes) {
@@ -202,6 +243,11 @@ public class Controller {
     }
   }
 
+  /**
+   * Sets whether a button is disabled based on an array of booleans
+   * @param ar Array to set
+   * @param btn Button whose disable will be set.
+   */
   public void setDisable(boolean[] ar, Button btn) {
     boolean res = ar[0];
     for (boolean bool : ar)

@@ -20,7 +20,11 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-// I know, I know. An essentially global state. In my defense, JavaFX ain't exactly built properly for a game to begin with.
+/**
+ * Holds all state for the game.
+ * I know, I know. An essentially global state. In my defense, JavaFX ain't exactly built properly for a game to begin with.
+ *
+ */
 public class GameVars {
 
   public static final Vec2 extents = new Vec2(1600 * 0.75, 900);

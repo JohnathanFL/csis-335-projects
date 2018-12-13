@@ -8,6 +8,7 @@
 
 package weather;
 
+import com.sun.deploy.net.HttpResponse;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.ObservableList;

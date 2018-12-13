@@ -11,6 +11,9 @@ package pong;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Stores data from the User table
+ */
 public class User {
   public int id;
   public String name, email;

@@ -14,6 +14,9 @@ import pong.Main;
 
 import java.net.URISyntaxException;
 
+/**
+ * Just sits there, doing nothing. Has nice music though.
+ */
 public class DormantState implements State {
   MediaPlayer mediaPlayer;
 

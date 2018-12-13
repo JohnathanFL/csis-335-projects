@@ -9,6 +9,9 @@
 package pong.state;
 
 
+/**
+ * Interface for all states.
+ */
 public interface State {
   GameVars state = new GameVars();
 

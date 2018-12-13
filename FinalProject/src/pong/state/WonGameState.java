@@ -16,6 +16,10 @@ import pong.Main;
 import java.sql.PreparedStatement;
 import java.time.Instant;
 
+/**
+ * Tells the player they won and plays an awesome song
+ * Adds a record to the "Played" table, then resets to a new PlayState
+ */
 public class WonGameState implements State {
   Instant endAt;
   int winner;

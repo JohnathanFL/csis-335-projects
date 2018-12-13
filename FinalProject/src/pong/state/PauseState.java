@@ -10,6 +10,10 @@ package pong.state;
 
 import java.time.Instant;
 
+/**
+ * Holds the game dormant.
+ * Unlike dormant state, this one can be exited with the Pause key.
+ */
 public class PauseState implements State {
   Instant endAt = Instant.now().plusMillis(1000);
 

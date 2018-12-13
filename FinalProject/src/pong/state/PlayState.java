@@ -19,6 +19,9 @@ import pong.Vec2;
 import java.time.Instant;
 import java.util.Random;
 
+/**
+ * The meat of the game. Pong moves, paddle slides, pong hits paddle, pong hits goal, etc.
+ */
 public class PlayState implements State {
 
   public int maxSpeed = 24;

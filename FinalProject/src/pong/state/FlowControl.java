@@ -8,8 +8,11 @@
  */
 package pong.state;
 
+/**
+ * Sugar for StateMachine logic
+ */
 public enum FlowControl {
   Continue,
   LeaveState,
-  TransitionTo;
+  TransitionTo; /**If set, then state.nextState should not be null **/
 }

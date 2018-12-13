@@ -8,6 +8,9 @@
  */
 package pong;
 
+/**
+ * Which background should robohash use?
+ */
 public enum BgSet {
   None(0),
   Scenery(1),

@@ -8,6 +8,9 @@
  */
 package pong;
 
+/**
+ * IconSet for Robohash
+ */
 public enum IconSet {
   Standard(1),
   Monster(2),

@@ -16,6 +16,9 @@ import java.time.Duration;
 import java.time.Instant;
 
 
+/**
+ * Provides a countdown and nice sound.
+ */
 public class WaitState implements State {
   Instant endAt;
   State nextState;
