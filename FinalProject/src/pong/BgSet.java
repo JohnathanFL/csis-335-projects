@@ -9,7 +9,7 @@
 package pong;
 
 /**
- * Which background should robohash use?
+ * Which background should robohash use?z
  */
 public enum BgSet {
   None(0),
